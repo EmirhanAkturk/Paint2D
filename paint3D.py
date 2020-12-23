@@ -10,6 +10,18 @@ import sys
 windowWidth=1920
 windowHeight=1080
 
+mousePositionX = 0
+mousePositionY = 0
+
+mouseDrawPositionX = 0
+mouseDrawPositionY = 0
+
+
+points = []
+
+isClicked = False
+
+
 panelOptions=["Pencil","Eraser"] #Ekleme yapılacak
 selectedPanel=str()
 
@@ -89,14 +101,34 @@ def draw():
     global optionsPanel
     glViewport(0, 0, 1540, 735)
     paintBackground(1, 1, 1)
-    if(selectedPanel==optionsPanel[0]):
+    if(selectedPanel==panelOptions[0]):
         pencilDraw()
 
+def convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY): #convert mouse position to drawing axis position
+    point = []
+    point.append ((mouseDrawPositionX-770)/770)
+    point.append( (110+367.5-mouseDrawPositionY)/367.5)
+
+    return point
+
 def pencilDraw():
+    global mousePositionX, mousePositionY
+    global mouseDrawPositionX,mouseDrawPositionY
+    global points
 
+    #if(isClicked):
+    point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
+    points.append(point)
 
+    glPointSize(5.0)
+    glColor(0, 0, 0)
 
+    glBegin(GL_POINTS)
 
+    for i in range (len(points)):
+        glVertex2f(points[i][0],points[i][1])
+
+    glEnd()
 
 def paint():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -107,19 +139,29 @@ def paint():
     glutSwapBuffers()
 
 def mouseFunction(*args):
-    global selectedPanel
-    global panelOptions
+    global selectedPanel,panelOptions
+    global mousePositionX,mousePositionY,isClicked
+
     print(args)
-    mouse_x = args[2]
-    mouse_y = args[3]
+    mousePositionX = args[2]
+    mousePositionY = args[3]
     if(args[0]==GLUT_LEFT_BUTTON):
-        if(mouse_x<100 and mouse_y<110):
+        if(mousePositionX<100 and mousePositionY<110):
             selectedPanel=panelOptions[0]
+        if(args[1] == 0 ):
+            isClicked = True
+        elif(args[1] == 1):
+            isClicked = False
 
+    glutPostRedisplay()
 
+def mouseControl( mx, my):
+    global mouseDrawPositionX,mouseDrawPositionY
+    mouseDrawPositionX = mx
+    mouseDrawPositionY = my
 
+    print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
 
-    glutPostRedisplay
 
 def main():
     global windowWidth
@@ -132,6 +174,7 @@ def main():
     glutDisplayFunc(paint)
     glutIdleFunc(paint)
     glutMouseFunc(mouseFunction)
+    glutPassiveMotionFunc(mouseControl)
     #glutSpecialFunc(keyPressed)
     InitGL()
     glutMainLoop()
