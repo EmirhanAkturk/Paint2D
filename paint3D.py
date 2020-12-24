@@ -16,6 +16,8 @@ mousePositionY = 0
 mouseDrawPositionX = 0
 mouseDrawPositionY = 0
 
+selectedPencil=0
+
 
 points = []
 
@@ -56,20 +58,19 @@ def display():
     """Glut display function."""
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     InitImage()
-    glColor3f(1, 1, 1)
     glBegin(GL_QUADS)
 
     glTexCoord2f(0.2, 0.2)
-    glVertex3f(-0.2, 0.2, 0)
+    glVertex3f(-1, 1, 0)
 
     glTexCoord2f(0.2, 0.69)
-    glVertex3f(-0.2, -0.2, 0)
+    glVertex3f(-1, -1, 0)
 
     glTexCoord2f(0.69, 0.69)
-    glVertex3f(0.2, -0.2, 0)
+    glVertex3f(1, -1, 0)
 
     glTexCoord2f(0.69, 0)
-    glVertex3f(0.2, 0.2, 0)
+    glVertex3f(1, 1, 0)
     glEnd()
 
     glFlush()
@@ -84,11 +85,15 @@ def paintBackground(r,g,b):
     glEnd()
 
 def controlPanel(): #panel
+    global selectedPencil
     glViewport(0, 735, 1540, 110)
     paintBackground(1,0,0)
     glViewport(0,735,100,110)
-    paintBackground(0, 0, 1)
-    #display()
+    if selectedPencil%2==0:
+        paintBackground(0, 0, 1)
+    else:
+        paintBackground(1,0,0)
+    display()
     glViewport(100,735,100,110)
     paintBackground(0,1,0)
     glViewport(200, 735, 100, 110)
@@ -99,10 +104,16 @@ def controlPanel(): #panel
 def draw(): #beyaz ekrana yapılacak cizim
     global selectedPanel
     global optionsPanel
+    global points
     glViewport(0, 0, 1540, 735)
     paintBackground(1, 1, 1)
-    if(selectedPanel==panelOptions[0]):
-        pencilDraw()
+    pencilDraw()
+    glBegin(GL_POINTS)
+    print(points)
+    for i in range(len(points)):
+        print(len(points))
+        glVertex2f(points[i][0], points[i][1])
+    glEnd()
 
 def convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY): #convert mouse position to drawing axis position
     point = []
@@ -115,20 +126,13 @@ def pencilDraw(): #Kalemin cizim yaptıgı fonksiyon
     global mousePositionX, mousePositionY
     global mouseDrawPositionX,mouseDrawPositionY
     global points
-
-    if isClicked==True:
-        point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
-        points.append(point)
+    if (selectedPanel == panelOptions[0]):
+        if isClicked==True:
+            point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
+            points.append(point)
 
     glPointSize(5.0)
     glColor(0, 0, 0)
-
-    glBegin(GL_POINTS)
-
-    for i in range (len(points)):
-        glVertex2f(points[i][0],points[i][1])
-
-    glEnd()
 
 def paint(): #Ana Fonksiyon
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -140,7 +144,7 @@ def paint(): #Ana Fonksiyon
 
 def mouseFunction(*args):
     global selectedPanel,panelOptions
-    global mousePositionX,mousePositionY,isClicked
+    global mousePositionX,mousePositionY,isClicked,selectedPencil
 
     print(args)
     mousePositionX = args[2]
@@ -149,6 +153,9 @@ def mouseFunction(*args):
         isClicked=True
         if(mousePositionX<100 and mousePositionY<110):
             selectedPanel=panelOptions[0]
+            selectedPencil += 1
+        if selectedPencil%2==0:
+            selectedPanel=""
     else:
         isClicked=False
 
