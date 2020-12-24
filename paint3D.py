@@ -83,7 +83,7 @@ def paintBackground(r,g,b):
     glVertex2f(1, 1)
     glEnd()
 
-def controlPanel():
+def controlPanel(): #panel
     glViewport(0, 735, 1540, 110)
     paintBackground(1,0,0)
     glViewport(0,735,100,110)
@@ -96,7 +96,7 @@ def controlPanel():
     glViewport(300, 735, 100, 110)
     paintBackground(0, 1, 0)
 
-def draw():
+def draw(): #beyaz ekrana yapılacak cizim
     global selectedPanel
     global optionsPanel
     glViewport(0, 0, 1540, 735)
@@ -111,14 +111,14 @@ def convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY): #convert mou
 
     return point
 
-def pencilDraw():
+def pencilDraw(): #Kalemin cizim yaptıgı fonksiyon
     global mousePositionX, mousePositionY
     global mouseDrawPositionX,mouseDrawPositionY
     global points
 
-    #if(isClicked):
-    point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
-    points.append(point)
+    if isClicked==True:
+        point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
+        points.append(point)
 
     glPointSize(5.0)
     glColor(0, 0, 0)
@@ -130,7 +130,7 @@ def pencilDraw():
 
     glEnd()
 
-def paint():
+def paint(): #Ana Fonksiyon
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     # gluPerspective( fovy, aspect, zNear, zFar )
     # gluPerspective(150, 1.5, 1, 20)
@@ -145,13 +145,14 @@ def mouseFunction(*args):
     print(args)
     mousePositionX = args[2]
     mousePositionY = args[3]
-    if(args[0]==GLUT_LEFT_BUTTON):
+    if(args[0]==GLUT_LEFT_BUTTON and args[1]==GLUT_DOWN):
+        isClicked=True
         if(mousePositionX<100 and mousePositionY<110):
             selectedPanel=panelOptions[0]
-        if(args[1] == 0 ):
-            isClicked = True
-        elif(args[1] == 1):
-            isClicked = False
+    else:
+        isClicked=False
+
+    print(isClicked.__str__())
 
     glutPostRedisplay()
 
@@ -160,7 +161,7 @@ def mouseControl( mx, my):
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
 
-    print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
+    #print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
 
 
 def main():
@@ -174,7 +175,7 @@ def main():
     glutDisplayFunc(paint)
     glutIdleFunc(paint)
     glutMouseFunc(mouseFunction)
-    glutPassiveMotionFunc(mouseControl)
+    glutMotionFunc(mouseControl)
     #glutSpecialFunc(keyPressed)
     InitGL()
     glutMainLoop()
