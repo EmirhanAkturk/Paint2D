@@ -38,8 +38,8 @@ def InitImage():
     # Create Texture
     id = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D, id)  # bind Texture, 2d texture (x and y size)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexImage2D(GL_TEXTURE_2D, 0, 3, xSize, ySize, 0, GL_RGB, GL_UNSIGNED_BYTE, rawReference)
@@ -56,21 +56,21 @@ def InitGL():
 
 def display():
     """Glut display function."""
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    #glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     InitImage()
     glBegin(GL_QUADS)
 
-    glTexCoord2f(0.2, 0.2)
-    glVertex3f(-1, 1, 0)
+    glTexCoord2f(0, 0)
+    glVertex3f(-0.75, 0.75, 0)
 
-    glTexCoord2f(0.2, 0.69)
-    glVertex3f(-1, -1, 0)
+    glTexCoord2f(0, 1)
+    glVertex3f(-0.75, -0.75, 0)
 
-    glTexCoord2f(0.69, 0.69)
-    glVertex3f(1, -1, 0)
+    glTexCoord2f(1,1)
+    glVertex3f(0.75, -0.75, 0)
 
-    glTexCoord2f(0.69, 0)
-    glVertex3f(1, 1, 0)
+    glTexCoord2f(1,0)
+    glVertex3f(0.75, 0.75, 0)
     glEnd()
 
     glFlush()
@@ -90,9 +90,9 @@ def controlPanel(): #panel
     paintBackground(1,0,0)
     glViewport(0,735,100,110)
     if selectedPencil%2==0:
-        paintBackground(0, 0, 1)
+        paintBackground(0.9, 0.9, 0.9)
     else:
-        paintBackground(1,0,0)
+        paintBackground(0.6,0.6,0.6)
     display()
     glViewport(100,735,100,110)
     paintBackground(0,1,0)
@@ -109,9 +109,9 @@ def draw(): #beyaz ekrana yapılacak cizim
     paintBackground(1, 1, 1)
     pencilDraw()
     glBegin(GL_POINTS)
-    print(points)
+    #print(points)
     for i in range(len(points)):
-        print(len(points))
+        #print(len(points))
         glVertex2f(points[i][0], points[i][1])
     glEnd()
 
