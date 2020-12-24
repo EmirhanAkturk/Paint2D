@@ -4,6 +4,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from PIL import Image
+import numpy as np
 
 import sys
 
@@ -19,16 +20,19 @@ mouseDrawPositionY = 0
 selectedPencil=0
 
 
-points = []
+pencilPoints = []
+eraserPoints=[]
 
+pencilTextureId=0
+eraserTextureId=0
 isClicked = False
 
 
 panelOptions=["Pencil","Eraser"] #Ekleme yapılacak
 selectedPanel=str()
 
-def InitImage():
-    pencilImg = Image.open("./img/kalem.png")
+def LoadTexture(file):
+    pencilImg = Image.open(file)
     xSize = pencilImg.size[0]
     ySize = pencilImg.size[1]
     rawReference = pencilImg.tobytes("raw", "RGB")
@@ -44,8 +48,14 @@ def InitImage():
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexImage2D(GL_TEXTURE_2D, 0, 3, xSize, ySize, 0, GL_RGB, GL_UNSIGNED_BYTE, rawReference)
     glEnable(GL_TEXTURE_2D)
+    return id
 
 def InitGL():
+    global pencilTextureId, eraserTextureId
+    glActiveTexture(GL_TEXTURE0)
+    pencilTextureId = LoadTexture("./img/pencil.png")
+    eraserTextureId = LoadTexture("./img/eraser2.png")
+    glEnable(GL_TEXTURE_2D)
     glClearColor(0.0, 0.0, 0.0, 0.0) #darkmode
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
@@ -54,25 +64,25 @@ def InitGL():
     glLoadIdentity()
 
 
-def display():
+def display(id):
     """Glut display function."""
     #glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    InitImage()
+    #LoadTexture("img/pencil.png")
+    glBindTexture(GL_TEXTURE_2D, id)
     glBegin(GL_QUADS)
 
     glTexCoord2f(0, 0)
-    glVertex3f(-0.75, 0.75, 0)
+    glVertex3f(-1, 1, 0)
 
     glTexCoord2f(0, 1)
-    glVertex3f(-0.75, -0.75, 0)
+    glVertex3f(-1, -1, 0)
 
     glTexCoord2f(1,1)
-    glVertex3f(0.75, -0.75, 0)
+    glVertex3f(1, -1, 0)
 
     glTexCoord2f(1,0)
-    glVertex3f(0.75, 0.75, 0)
+    glVertex3f(1, 1, 0)
     glEnd()
-
     glFlush()
 
 def paintBackground(r,g,b):
@@ -86,16 +96,23 @@ def paintBackground(r,g,b):
 
 def controlPanel(): #panel
     global selectedPencil
+    global panelOptions
     glViewport(0, 735, 1540, 110)
     paintBackground(1,0,0)
     glViewport(0,735,100,110)
-    if selectedPencil%2==0:
-        paintBackground(0.9, 0.9, 0.9)
+    if selectedPanel==panelOptions[0]:
+        paintBackground(0.6, 0.6, 0.6)
     else:
-        paintBackground(0.6,0.6,0.6)
-    display()
+        paintBackground(0.9,0.9,0.9)
+
+    display(pencilTextureId)
     glViewport(100,735,100,110)
-    paintBackground(0,1,0)
+    if selectedPanel == panelOptions[1]:
+        paintBackground(0.6, 0.6, 0.6)
+    else:
+        paintBackground(0.9, 0.9, 0.9)
+    display(eraserTextureId)
+    #paintBackground(0,1,0)
     glViewport(200, 735, 100, 110)
     paintBackground(0, 0, 1)
     glViewport(300, 735, 100, 110)
@@ -103,17 +120,28 @@ def controlPanel(): #panel
 
 def draw(): #beyaz ekrana yapılacak cizim
     global selectedPanel
-    global optionsPanel
-    global points
+    global panelOptions
+    global pencilPoints
     glViewport(0, 0, 1540, 735)
     paintBackground(1, 1, 1)
-    pencilDraw()
+    if selectedPanel == panelOptions[0]:
+        pencilDraw()
+    glPointSize(5.0)
+    glColor(0, 0, 0)
     glBegin(GL_POINTS)
-    #print(points)
-    for i in range(len(points)):
-        #print(len(points))
-        glVertex2f(points[i][0], points[i][1])
+    for i in range(len(pencilPoints)):
+        glVertex2f(pencilPoints[i][0], pencilPoints[i][1])
     glEnd()
+    if selectedPanel==panelOptions[1]:
+        eraser()
+        glPointSize(15.0)
+        glColor(1, 1, 1)
+        glBegin(GL_POINTS)
+        for i in range(len(eraserPoints)):
+            searchAndRemove(i)
+        glEnd()
+
+
 
 def convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY): #convert mouse position to drawing axis position
     point = []
@@ -125,14 +153,25 @@ def convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY): #convert mou
 def pencilDraw(): #Kalemin cizim yaptıgı fonksiyon
     global mousePositionX, mousePositionY
     global mouseDrawPositionX,mouseDrawPositionY
-    global points
-    if (selectedPanel == panelOptions[0]):
-        if isClicked==True:
-            point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
-            points.append(point)
+    global pencilPoints
 
-    glPointSize(5.0)
-    glColor(0, 0, 0)
+    if isClicked==True:
+        point = convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY)
+        pencilPoints.append(point)
+
+
+
+def eraser():
+    global mousePositionX, mousePositionY
+    global mouseDrawPositionX, mouseDrawPositionY
+    global eraserPoints
+    if isClicked == True:
+        point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
+        eraserPoints.append(point)
+    glPointSize(10.0)
+    glColor(0, 1, 0)
+
+
 
 def paint(): #Ana Fonksiyon
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -153,9 +192,8 @@ def mouseFunction(*args):
         isClicked=True
         if(mousePositionX<100 and mousePositionY<110):
             selectedPanel=panelOptions[0]
-            selectedPencil += 1
-        if selectedPencil%2==0:
-            selectedPanel=""
+        elif 100 < mousePositionX < 200 and mousePositionY<110:
+            selectedPanel=panelOptions[1]
     else:
         isClicked=False
 
@@ -169,6 +207,16 @@ def mouseControl( mx, my):
     mouseDrawPositionY = my
 
     #print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
+
+def searchAndRemove(idx):
+    global pencilPoints,eraserPoints
+    for i in range(len(pencilPoints)):
+        if (abs(pencilPoints[i][0] - eraserPoints[idx][0])<=0.01 and abs(pencilPoints[i][1]-eraserPoints[idx][1])<=0.01):
+            pencilPoints.pop(i)
+            eraserPoints.pop(idx)
+            return True
+    return False
+
 
 
 def main():
