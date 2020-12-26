@@ -30,6 +30,7 @@ isClicked = False
 
 panelOptions=["Pencil","Eraser"] #Ekleme yapılacak
 selectedPanel=str()
+function=[]
 
 def LoadTexture(file):
     pencilImg = Image.open(file)
@@ -49,19 +50,6 @@ def LoadTexture(file):
     glTexImage2D(GL_TEXTURE_2D, 0, 3, xSize, ySize, 0, GL_RGB, GL_UNSIGNED_BYTE, rawReference)
     glEnable(GL_TEXTURE_2D)
     return id
-
-def InitGL():
-    global pencilTextureId, eraserTextureId
-    glActiveTexture(GL_TEXTURE0)
-    pencilTextureId = LoadTexture("./img/pencil.png")
-    eraserTextureId = LoadTexture("./img/eraser2.png")
-    glEnable(GL_TEXTURE_2D)
-    glClearColor(0.0, 0.0, 0.0, 0.0) #darkmode
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    #gluOrtho2D(-6, 6, -6, 6)
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
 
 
 def display(id):
@@ -84,6 +72,20 @@ def display(id):
     glVertex3f(1, 1, 0)
     glEnd()
     glFlush()
+
+
+def InitGL():
+    global pencilTextureId, eraserTextureId
+    glActiveTexture(GL_TEXTURE0)
+    pencilTextureId = LoadTexture("./img/pencil.png")
+    eraserTextureId = LoadTexture("./img/eraser2.png")
+    glEnable(GL_TEXTURE_2D)
+    glClearColor(0.0, 0.0, 0.0, 0.0) #darkmode
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    #gluOrtho2D(-6, 6, -6, 6)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
 
 def paintBackground(r,g,b):
     glColor3f(r,g,b)
@@ -112,36 +114,10 @@ def controlPanel(): #panel
     else:
         paintBackground(0.9, 0.9, 0.9)
     display(eraserTextureId)
-    #paintBackground(0,1,0)
     glViewport(200, 735, 100, 110)
     paintBackground(0, 0, 1)
     glViewport(300, 735, 100, 110)
     paintBackground(0, 1, 0)
-
-def draw(): #beyaz ekrana yapılacak cizim
-    global selectedPanel
-    global panelOptions
-    global pencilPoints
-    glViewport(0, 0, 1540, 735)
-    paintBackground(1, 1, 1)
-    if selectedPanel == panelOptions[0]:
-        pencilDraw()
-    glPointSize(5.0)
-    glColor(0, 0, 0)
-    glBegin(GL_POINTS)
-    for i in range(len(pencilPoints)):
-        glVertex2f(pencilPoints[i][0], pencilPoints[i][1])
-    glEnd()
-    if selectedPanel==panelOptions[1]:
-        eraser()
-        glPointSize(15.0)
-        glColor(1, 1, 1)
-        glBegin(GL_POINTS)
-        for i in range(len(eraserPoints)):
-            searchAndRemove(i)
-        glEnd()
-
-
 
 def convertMousePosDrawAxis(mouseDrawPositionX,mouseDrawPositionY): #convert mouse position to drawing axis position
     point = []
@@ -172,6 +148,31 @@ def eraser():
     glColor(0, 1, 0)
 
 
+def draw(): #beyaz ekrana yapılacak cizim
+    global selectedPanel
+    global panelOptions
+    global pencilPoints
+    global function
+    glViewport(0, 0, 1540, 735)
+    paintBackground(1, 1, 1)
+    if selectedPanel == panelOptions[0]:
+        pencilDraw()
+    glPointSize(5.0)
+    glColor(0, 0, 0)
+    glBegin(GL_POINTS)
+    for i in range(len(pencilPoints)):
+        glVertex2f(pencilPoints[i][0], pencilPoints[i][1])
+    glEnd()
+    if selectedPanel==panelOptions[1]:
+        eraser()
+        glPointSize(15.0)
+        glColor(1, 1, 1)
+        glBegin(GL_POINTS)
+        print(len(eraserPoints))
+        for i in range(len(eraserPoints)):
+            searchAndRemove(i)
+        glEnd()
+
 
 def paint(): #Ana Fonksiyon
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -183,7 +184,7 @@ def paint(): #Ana Fonksiyon
 
 def mouseFunction(*args):
     global selectedPanel,panelOptions
-    global mousePositionX,mousePositionY,isClicked,selectedPencil
+    global mousePositionX,mousePositionY,isClicked,selectedPencil,eraserPoints
 
     print(args)
     mousePositionX = args[2]
@@ -192,6 +193,7 @@ def mouseFunction(*args):
         isClicked=True
         if(mousePositionX<100 and mousePositionY<110):
             selectedPanel=panelOptions[0]
+            eraserPoints=[]
         elif 100 < mousePositionX < 200 and mousePositionY<110:
             selectedPanel=panelOptions[1]
     else:
@@ -207,14 +209,27 @@ def mouseControl( mx, my):
     mouseDrawPositionY = my
 
     #print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
+def pencil():
+    if selectedPanel == panelOptions[0]:
+        pencilDraw()
+    glPointSize(5.0)
+    glColor(0, 0, 0)
+    glBegin(GL_POINTS)
+    for i in range(len(pencilPoints)):
+        glVertex2f(pencilPoints[i][0], pencilPoints[i][1])
+    glEnd()
+
 
 def searchAndRemove(idx):
     global pencilPoints,eraserPoints
     for i in range(len(pencilPoints)):
-        if (abs(pencilPoints[i][0] - eraserPoints[idx][0])<=0.01 and abs(pencilPoints[i][1]-eraserPoints[idx][1])<=0.01):
-            pencilPoints.pop(i)
-            eraserPoints.pop(idx)
-            return True
+        if len(eraserPoints)>idx:
+            if (abs(pencilPoints[i][0] - eraserPoints[idx][0])<=0.01 and abs(pencilPoints[i][1]-eraserPoints[idx][1])<=0.01):
+                pencilPoints.pop(i)
+                #eraserPoints.pop(idx)
+                return True
+        else:
+            print("astı kardesim")
     return False
 
 
