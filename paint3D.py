@@ -25,12 +25,13 @@ eraserPoints=[]
 
 pencilTextureId=0
 eraserTextureId=0
+quadTextureId=0
 isClicked = False
 
 
-panelOptions=["Pencil","Eraser"] #Ekleme yapılacak
+panelOptions=["Pencil","Eraser","Quads"] #Ekleme yapılacak
 selectedPanel=str()
-function=[]
+quadPoints=[]
 
 def LoadTexture(file):
     pencilImg = Image.open(file)
@@ -75,10 +76,11 @@ def display(id):
 
 
 def InitGL():
-    global pencilTextureId, eraserTextureId
+    global pencilTextureId, eraserTextureId,quadTextureId
     glActiveTexture(GL_TEXTURE0)
     pencilTextureId = LoadTexture("./img/pencil.png")
     eraserTextureId = LoadTexture("./img/eraser2.png")
+    quadTextureId=LoadTexture("./img/quads.png")
     glEnable(GL_TEXTURE_2D)
     glClearColor(0.0, 0.0, 0.0, 0.0) #darkmode
     glMatrixMode(GL_PROJECTION)
@@ -115,7 +117,11 @@ def controlPanel(): #panel
         paintBackground(0.9, 0.9, 0.9)
     display(eraserTextureId)
     glViewport(200, 735, 100, 110)
-    paintBackground(0, 0, 1)
+    if selectedPanel == panelOptions[2]:
+        paintBackground(0.6, 0.6, 0.6)
+    else:
+        paintBackground(0.9, 0.9, 0.9)
+    display(quadTextureId)
     glViewport(300, 735, 100, 110)
     paintBackground(0, 1, 0)
 
@@ -196,6 +202,8 @@ def mouseFunction(*args):
             eraserPoints=[]
         elif 100 < mousePositionX < 200 and mousePositionY<110:
             selectedPanel=panelOptions[1]
+        elif 200<mousePositionX <300 and mousePositionY<110:
+            selectedPanel=panelOptions[2]
     else:
         isClicked=False
 
@@ -207,17 +215,7 @@ def mouseControl( mx, my):
     global mouseDrawPositionX,mouseDrawPositionY
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
-
-    #print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
-def pencil():
-    if selectedPanel == panelOptions[0]:
-        pencilDraw()
-    glPointSize(5.0)
-    glColor(0, 0, 0)
-    glBegin(GL_POINTS)
-    for i in range(len(pencilPoints)):
-        glVertex2f(pencilPoints[i][0], pencilPoints[i][1])
-    glEnd()
+    print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
 
 
 def searchAndRemove(idx):
