@@ -30,10 +30,9 @@ quadTextureId=0
 isClicked = False
 isFirst=True
 
-
 panelOptions=["Pencil","Eraser","Quads"] #Ekleme yapılacak
 selectedPanel=str()
-quadsPoints=[] #quadları tutan liste
+quads=[] #quadları tutan liste
 quadPoints=[] #quadın koordinatlarını tutan liste
 
 def LoadTexture(file):
@@ -157,7 +156,7 @@ def eraser():
 def quadDraw():
     global mousePositionX, mousePositionY
     global mouseDrawPositionX, mouseDrawPositionY
-    global quadsPoints,quadPoints
+    global quads,quadPoints
     global isFirst
     '''if isClicked==True:
         if isFirst:
@@ -199,7 +198,7 @@ def draw(): #beyaz ekrana yapılacak cizim
     global selectedPanel
     global panelOptions
     global pencilPoints
-    global quadPoints,quadsPoints
+    global quadPoints,quads
     glViewport(0, 0, 1540, 735)
     paintBackground(1, 1, 1)
     if selectedPanel == panelOptions[0]:
@@ -220,9 +219,10 @@ def draw(): #beyaz ekrana yapılacak cizim
         glEnd()
     if selectedPanel==panelOptions[2]:
         quadDraw()
-    if len(quadsPoints)>0:
-        point1=quadsPoints[0][0]
-        point2=quadsPoints[0][1]
+    if len(quads)>0:
+        print(quads)
+        point1=quads[0][0]
+        point2=quads[0][1]
 
         glColor3f(1,0,0)
         glBegin(GL_QUADS)
@@ -243,7 +243,7 @@ def paint(): #Ana Fonksiyon
 
 def mouseFunction(*args):
     global selectedPanel,panelOptions,isFirst
-    global mousePositionX,mousePositionY,isClicked,selectedPencil,eraserPoints,quadPoints,quadsPoints
+    global mousePositionX,mousePositionY,isClicked,selectedPencil,eraserPoints,quadPoints,quads
 
     mousePositionX = args[2]
     mousePositionY = args[3]
@@ -257,28 +257,33 @@ def mouseFunction(*args):
             selectedPanel=panelOptions[1]
         elif 200<mousePositionX <300 and mousePositionY<110:
             selectedPanel=panelOptions[2]
-        elif mousePositionY>110 and selectedPanel==panelOptions[2]:
+        elif mousePositionY>110 and selectedPanel==panelOptions[2]: #farenin ilk dokunusunda koordinat alır
             if isFirst:
                 quadPoints.append(convertMousePosDrawAxis(mousePositionX,mousePositionY))
                 isFirst=False
-
-    elif  args[0]==GLUT_LEFT_BUTTON and args[1]==GLUT_UP:
-        isClicked=False
-        if mousePositionY > 110 and selectedPanel==panelOptions[2]:
-            quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
-            quadsPoints.append(quadPoints)
-
     else:
         isClicked=False
+    '''elif  args[0]==GLUT_LEFT_BUTTON and args[1]==GLUT_UP: #Fareden el kaldırıldıgındaki son noktayı alır 
+            isClicked=False
+            if mousePositionY > 110 and selectedPanel==panelOptions[2]:
+                quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
+                quads.append(quadPoints)'''
 
 
     glutPostRedisplay()
 
 def mouseControl( mx, my):
-    global mouseDrawPositionX,mouseDrawPositionY
+    global mouseDrawPositionX,mouseDrawPositionY,quadPoints,quads
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
-    #print (str(mouseDrawPositionX) + "," + str( mouseDrawPositionY ))
+    if mousePositionY > 110 and selectedPanel == panelOptions[2]:
+        if len(quadPoints)>1:
+            quadPoints.pop()
+        quadPoints.append(convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY))
+        quads.append(quadPoints)
+    print("quads boyutu") #fareyle dolandırma gecince quads boyutu sabit kalıyor
+    print(len(quads))
+
 
 
 def searchAndRemove(idx):
