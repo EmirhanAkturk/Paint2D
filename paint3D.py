@@ -220,16 +220,15 @@ def draw(): #beyaz ekrana yapılacak cizim
     if selectedPanel==panelOptions[2]:
         quadDraw()
     if len(quads)>0:
-        print(quads)
-        point1=quads[0][0]
-        point2=quads[0][1]
-
-        glColor3f(1,0,0)
+        glColor3f(1, 0, 0)
         glBegin(GL_QUADS)
-        glVertex2f(point1[0], point1[1])
-        glVertex2f(point2[0], point1[1])
-        glVertex2f(point2[0], point2[1])
-        glVertex2f(point1[0], point2[1])
+        for i in range(len(quads)):
+            point1=quads[i][0]
+            point2=quads[i][1]
+            glVertex2f(point1[0], point1[1])
+            glVertex2f(point2[0], point1[1])
+            glVertex2f(point2[0], point2[1])
+            glVertex2f(point1[0], point2[1])
         glEnd()
 
 
@@ -258,16 +257,27 @@ def mouseFunction(*args):
         elif 200<mousePositionX <300 and mousePositionY<110:
             selectedPanel=panelOptions[2]
         elif mousePositionY>110 and selectedPanel==panelOptions[2]: #farenin ilk dokunusunda koordinat alır
-            if isFirst:
+            if len(quadPoints)<1:
                 quadPoints.append(convertMousePosDrawAxis(mousePositionX,mousePositionY))
-                isFirst=False
-    else:
-        isClicked=False
-    '''elif  args[0]==GLUT_LEFT_BUTTON and args[1]==GLUT_UP: #Fareden el kaldırıldıgındaki son noktayı alır 
+            else:
+                point=convertMousePosDrawAxis(mousePositionX,mousePositionY)
+                quadPoints[0][0]=point[0]
+                quadPoints[0][1]=point[1]
+    elif  args[0]==GLUT_LEFT_BUTTON and args[1]==GLUT_UP: #Fareden el kaldırıldıgındaki son noktayı alır
             isClicked=False
             if mousePositionY > 110 and selectedPanel==panelOptions[2]:
-                quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
-                quads.append(quadPoints)'''
+                if len(quadPoints) < 2:
+                    quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
+                else:
+                    point = convertMousePosDrawAxis(mousePositionX, mousePositionY)
+                    quadPoints[1][0] = point[0]
+                    quadPoints[1][1] = point[1]
+                point1=[quadPoints[0][0],quadPoints[0][1]]
+                point2 = [quadPoints[1][0], quadPoints[1][1]]
+                quads.append([point1,point2])
+    else:
+        isClicked=False
+
 
 
     glutPostRedisplay()
@@ -276,13 +286,13 @@ def mouseControl( mx, my):
     global mouseDrawPositionX,mouseDrawPositionY,quadPoints,quads
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
-    if mousePositionY > 110 and selectedPanel == panelOptions[2]:
+    '''if mousePositionY > 110 and selectedPanel == panelOptions[2]:
         if len(quadPoints)>1:
             quadPoints.pop()
         quadPoints.append(convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY))
         quads.append(quadPoints)
-    print("quads boyutu") #fareyle dolandırma gecince quads boyutu sabit kalıyor
-    print(len(quads))
+    print("quads boyutu") #fareyle dolandırma gecince quads boyutu sabit kalıyor '''
+
 
 
 
