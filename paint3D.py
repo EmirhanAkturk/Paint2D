@@ -294,8 +294,6 @@ def searchAndRemove(idx):
                 pencilPoints.pop(i)
                 #eraserPoints.pop(idx)
                 return True
-        else:
-            print("astı kardesim")
     return False
 
 
