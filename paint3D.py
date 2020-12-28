@@ -153,46 +153,18 @@ def eraser():
     glPointSize(10.0)
     glColor(0, 1, 0)
 
-def quadDraw():
-    global mousePositionX, mousePositionY
-    global mouseDrawPositionX, mouseDrawPositionY
-    global quads,quadPoints
-    global isFirst
-    '''if isClicked==True:
-        if isFirst:
-            point = convertMousePosDrawAxis(mousePositionX, mousePositionY)
-            quadPoints.append(point)
-            isFirst=False
-    if len(quadsPoints)>0:
-        ammar1=quadsPoints[0][0]
-        ammar2=quadsPoints[0][1]
-        print("ammar")
-        glLineWidth(5)
-        glColor3f(0,0,0)
+def quadDraw(): # Dinamik olarak Dörtgeni cizdirir
+    global quadPoints
+    if len(quadPoints)==2:
+        point1 = [quadPoints[0][0], quadPoints[0][1]]
+        point2 = [quadPoints[1][0], quadPoints[1][1]]
+        glColor3f(1, 0.5, 0.5)
         glBegin(GL_QUADS)
-        glVertex2f(ammar1[0], ammar1[1])
-        glVertex2f(ammar2[0], ammar1[1])
-        glVertex2f(ammar2[0], ammar2[1])
-        glVertex2f(ammar1[0], ammar2[1])
+        glVertex2f(point1[0], point1[1])
+        glVertex2f(point2[0], point1[1])
+        glVertex2f(point2[0], point2[1])
+        glVertex2f(point1[0], point2[1])
         glEnd()
-        glBegin(GL_QUADS)
-        glVertex2f(quadsPoints[0][0][0],quadsPoints[0][0][1])
-        glVertex2f(quadsPoints[0][1][0],quadPoints[0][0][1])
-        glVertex2f(quadsPoints[0][1][0],quadsPoints[0][1][1])
-        glVertex2f(quadsPoints[0][0][0],quadsPoints[0][1][1])
-        glEnd()'''
-    '''else:
-        point = convertMousePosDrawAxis(mousePositionX, mousePositionY)
-        quadPoints.append(point)
-        
-        glLineWidth(5)
-        glColor3f(0,0,0)
-        glBegin(GL_QUADS)
-        glVertex2f(quadPoints[0][0],quadPoints[0][1])
-        glVertex2f(mouseDrawPositionX,quadPoints[0][1])
-        glVertex2f(mouseDrawPositionX,mouseDrawPositionY)
-        glVertex2f(quadPoints[0][0],mouseDrawPositionY)
-        glEnd()'''
 
 def draw(): #beyaz ekrana yapılacak cizim
     global selectedPanel
@@ -272,9 +244,13 @@ def mouseFunction(*args):
                     point = convertMousePosDrawAxis(mousePositionX, mousePositionY)
                     quadPoints[1][0] = point[0]
                     quadPoints[1][1] = point[1]
+
                 point1=[quadPoints[0][0],quadPoints[0][1]]
                 point2 = [quadPoints[1][0], quadPoints[1][1]]
+
                 quads.append([point1,point2])
+                quadPoints.clear()
+
     else:
         isClicked=False
 
@@ -286,12 +262,12 @@ def mouseControl( mx, my):
     global mouseDrawPositionX,mouseDrawPositionY,quadPoints,quads
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
-    '''if mousePositionY > 110 and selectedPanel == panelOptions[2]:
+    if mousePositionY > 110 and selectedPanel == panelOptions[2]:
         if len(quadPoints)>1:
             quadPoints.pop()
         quadPoints.append(convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY))
-        quads.append(quadPoints)
-    print("quads boyutu") #fareyle dolandırma gecince quads boyutu sabit kalıyor '''
+
+ #fareyle dolandırma gecince quads boyutu sabit kalıyor '''
 
 
 
