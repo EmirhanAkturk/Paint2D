@@ -17,6 +17,7 @@ mouseDrawPositionY = 0
 
 selectedPencil = 0
 
+points = []
 pencilPoints = []
 eraserPoints = []
 
@@ -31,7 +32,6 @@ isFirst = True
 panelOptions = ["Pencil", "Eraser", "Quads"]  # Ekleme yapılacak
 selectedPanel = str()
 
-points = []
 quads = []  # quadları tutan liste
 quadPoints = []  # quadın koordinatlarını tutan liste
 
@@ -133,6 +133,12 @@ def mouseFunction(*args):
             pencilPoints.append(temp)
             points.clear()
 
+        elif mousePositionY > 110 and selectedPanel == panelOptions[1]:
+            points.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
+            temp = points.copy()
+            eraserPoints.append(temp)
+            points.clear()
+
     glutPostRedisplay()
 
 
@@ -161,17 +167,21 @@ def pencilDraw():  # Kalemin cizim yaptıgı fonksiyon
             glVertex2f(points[j + 1][0], points[j + 1][1])
             glEnd()
 
-
-
 def eraser():
     global mousePositionX, mousePositionY
     global mouseDrawPositionX, mouseDrawPositionY
-    global eraserPoints
-    if isClicked == True:
+    global pencilPoints, isClicked, isDrawing,points
+
+    if isClicked  and isDrawing:
         point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
-        eraserPoints.append(point)
-    glPointSize(10.0)
-    glColor(0, 1, 0)
+        points.append(point)
+        for j in range(len(points) - 1):
+            glBegin(GL_LINES)
+            glVertex2f(points[j][0], points[j][1])
+            glVertex2f(points[j + 1][0], points[j + 1][1])
+            glEnd()
+
+
 
 
 def quadDraw():  # Dinamik olarak Dörtgeni cizdirir
@@ -237,16 +247,11 @@ def draw():  # beyaz ekrana yapılacak cizim
     paintBackground(1, 1, 1)
 
     glColor(0, 0, 0)
+    glLineWidth(5)
+
+
     if selectedPanel == panelOptions[0]:
         pencilDraw()
-    '''
-    glPointSize(5.0)
-    
-    glBegin(GL_POINTS)
-    for i in range(len(pencilPoints)):
-        glVertex2f(pencilPoints[i][0], pencilPoints[i][1])
-    glEnd()
-    '''
 
     for i in range(len(pencilPoints)):
         for j in range(len(pencilPoints[i])-1):
@@ -258,6 +263,24 @@ def draw():  # beyaz ekrana yapılacak cizim
             glVertex2f(point2[0], point2[1])
             glEnd()
 
+
+    glColor(1, 1, 1)
+    glLineWidth(20)
+
+    if selectedPanel == panelOptions[1]:
+        eraser()
+
+    for i in range(len(eraserPoints)):
+        for j in range(len(eraserPoints[i])-1):
+            point1=eraserPoints[i][j]
+            point2=eraserPoints[i][j+1]
+
+            glBegin(GL_LINES)
+            glVertex2f(point1[0], point1[1])
+            glVertex2f(point2[0], point2[1])
+            glEnd()
+
+    '''
     if selectedPanel == panelOptions[1]:
         #eraser()
         glPointSize(15.0)
@@ -265,7 +288,7 @@ def draw():  # beyaz ekrana yapılacak cizim
         glBegin(GL_POINTS)
         for i in range(len(eraserPoints)):
             searchAndRemove(i)
-        glEnd()
+        glEnd()'''
     if selectedPanel == panelOptions[2]:
         quadDraw()
     if len(quads) > 0:
