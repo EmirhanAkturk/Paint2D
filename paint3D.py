@@ -35,6 +35,10 @@ selectedPanel = str()
 quads = []  # quadları tutan liste
 quadPoints = []  # quadın koordinatlarını tutan liste
 
+actionsPoints = []
+
+actionsNames = []
+
 
 def LoadTexture(file):
     pencilImg = Image.open(file)
@@ -54,6 +58,7 @@ def LoadTexture(file):
     glTexImage2D(GL_TEXTURE_2D, 0, 3, xSize, ySize, 0, GL_RGB, GL_UNSIGNED_BYTE, rawReference)
     glEnable(GL_TEXTURE_2D)
     return id
+
 
 def InitGL():
     global pencilTextureId, eraserTextureId, quadTextureId
@@ -76,10 +81,11 @@ def convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY):  # convert 
 
     return point
 
+
 def mouseFunction(*args):
-    global selectedPanel, panelOptions, isFirst, isDrawing,isClicked
+    global selectedPanel, panelOptions, isFirst, isDrawing, isClicked
     global mousePositionX, mousePositionY, selectedPencil, eraserPoints, quadPoints, quads
-    global mouseDrawPositionX, mouseDrawPositionY, points
+    global mouseDrawPositionX, mouseDrawPositionY, points, actionsNames, actionsPoints
 
     mousePositionX = args[2]
     mousePositionY = args[3]
@@ -90,17 +96,68 @@ def mouseFunction(*args):
     if (args[0] == GLUT_LEFT_BUTTON and args[1] == GLUT_DOWN):
         isClicked = True
 
-        if( mousePositionY > 110 ):
+        if (mousePositionY > 110):
             isDrawing = True
 
         if (mousePositionX < 100 and mousePositionY < 110):
+
+            if (len(actionsNames) >= 1):
+
+                if (actionsNames[len(actionsNames) - 1] == panelOptions[1]):
+
+                    temp = eraserPoints.copy()
+                    actionsPoints.append(temp)
+                    eraserPoints.clear()
+
+                elif (actionsNames[len(actionsNames) - 1] == panelOptions[2]):
+
+                    temp = quads.copy()
+                    actionsPoints.append(temp)
+                    quads.clear()
+
             selectedPanel = panelOptions[0]
-            eraserPoints.clear()
+            actionsNames.append(selectedPanel)
+            # eraserPoints.clear()
 
         elif 100 < mousePositionX < 200 and mousePositionY < 110:
+
+            if (len(actionsNames) >= 1):
+
+                if (actionsNames[len(actionsNames) - 1] == panelOptions[0]):
+
+                    temp = pencilPoints.copy()
+                    actionsPoints.append(temp)
+                    pencilPoints.clear()
+
+                elif (actionsNames[len(actionsNames) - 1] == panelOptions[2]):
+
+                    temp = quads.copy()
+                    actionsPoints.append(temp)
+                    quads.clear()
+
             selectedPanel = panelOptions[1]
+            actionsNames.append(selectedPanel)
+
         elif 200 < mousePositionX < 300 and mousePositionY < 110:
+
+            if (len(actionsNames) > 1):
+
+                if (actionsNames[len(actionsNames) - 1] == panelOptions[0]):
+
+                    temp = pencilPoints.copy()
+                    actionsPoints.append(temp)
+                    pencilPoints.clear()
+
+                elif (actionsNames[len(actionsNames) - 1] == panelOptions[1]):
+
+                    temp = eraserPoints.copy()
+                    actionsPoints.append(temp)
+                    eraserPoints.clear()
+
+
             selectedPanel = panelOptions[2]
+            actionsNames.append(selectedPanel)
+
         elif mousePositionY > 110 and selectedPanel == panelOptions[2]:  # farenin ilk dokunusunda koordinat alır
             if len(quadPoints) < 1:
                 quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
@@ -156,9 +213,9 @@ def mouseControl(mx, my):
 def pencilDraw():  # Kalemin cizim yaptıgı fonksiyon
     global mousePositionX, mousePositionY
     global mouseDrawPositionX, mouseDrawPositionY
-    global pencilPoints, isClicked, isDrawing,points
+    global pencilPoints, isClicked, isDrawing, points
 
-    if isClicked  and isDrawing:
+    if isClicked and isDrawing:
         point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
         points.append(point)
         for j in range(len(points) - 1):
@@ -166,13 +223,14 @@ def pencilDraw():  # Kalemin cizim yaptıgı fonksiyon
             glVertex2f(points[j][0], points[j][1])
             glVertex2f(points[j + 1][0], points[j + 1][1])
             glEnd()
+
 
 def eraser():
     global mousePositionX, mousePositionY
     global mouseDrawPositionX, mouseDrawPositionY
-    global pencilPoints, isClicked, isDrawing,points
+    global pencilPoints, isClicked, isDrawing, points
 
-    if isClicked  and isDrawing:
+    if isClicked and isDrawing:
         point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
         points.append(point)
         for j in range(len(points) - 1):
@@ -180,8 +238,6 @@ def eraser():
             glVertex2f(points[j][0], points[j][1])
             glVertex2f(points[j + 1][0], points[j + 1][1])
             glEnd()
-
-
 
 
 def quadDraw():  # Dinamik olarak Dörtgeni cizdirir
@@ -197,6 +253,7 @@ def quadDraw():  # Dinamik olarak Dörtgeni cizdirir
         glVertex2f(point1[0], point2[1])
         glEnd()
 
+
 def searchAndRemove(idx):
     global pencilPoints, eraserPoints
     for i in range(len(pencilPoints)):
@@ -207,6 +264,7 @@ def searchAndRemove(idx):
                 return True
     return False
 
+
 def paintBackground(r, g, b):
     glColor3f(r, g, b)
     glBegin(GL_QUADS)
@@ -215,6 +273,7 @@ def paintBackground(r, g, b):
     glVertex2f(1, -1)
     glVertex2f(1, 1)
     glEnd()
+
 
 def display(id):
     """Glut display function."""
@@ -239,30 +298,96 @@ def display(id):
 
 
 def draw():  # beyaz ekrana yapılacak cizim
-    global selectedPanel
-    global panelOptions
-    global pencilPoints
-    global quadPoints, quads
+    global panelOptions, selectedPanel, pencilPoints
+    global quadPoints, quads, actionsPoints, actionsNames
+
     glViewport(0, 0, 1540, 735)
     paintBackground(1, 1, 1)
 
+
+    for k in range(len(actionsNames)-1) :
+
+        glColor(0, 0, 0)
+        glLineWidth(5)
+
+        if(actionsNames[k] == panelOptions[0]):
+            for i in range(len(actionsPoints[k])):
+               for j in range(len(actionsPoints[k][i]) - 1):
+
+                   point1 = actionsPoints[k][i][j]
+                   point2 = actionsPoints[k][i][j + 1]
+
+                   glBegin(GL_LINES)
+                   glVertex2f(point1[0], point1[1])
+                   glVertex2f(point2[0], point2[1])
+                   glEnd()
+
+
+        glColor(1, 1, 1)
+        glLineWidth(20)
+
+        if (actionsNames[k] == panelOptions[1]):
+            for i in range(len(actionsPoints[k])):
+                for j in range(len(actionsPoints[k][i]) - 1):
+                    point1 = actionsPoints[k][i][j]
+                    point2 = actionsPoints[k][i][j + 1]
+
+                    glBegin(GL_LINES)
+                    glVertex2f(point1[0], point1[1])
+                    glVertex2f(point2[0], point2[1])
+                    glEnd()
+
+        glColor3f(1, 0, 0)
+
+        if (actionsNames[k] == panelOptions[2]):
+            for i in range(len(actionsPoints[k])):
+
+                for j in range(len(actionsPoints[k][i]) - 1):
+
+                    point1 = actionsPoints[k][i][j]
+                    point2 = actionsPoints[k][i][j + 1]
+
+                    glBegin(GL_QUADS)
+                    glVertex2f(point1[0], point1[1])
+                    glVertex2f(point2[0], point1[1])
+                    glVertex2f(point2[0], point2[1])
+                    glVertex2f(point1[0], point2[1])
+                    glEnd()
+
+
+    '''
+
+        if selectedPanel == panelOptions[2]:
+               quadDraw()
+
+        if len(quads) > 0:
+           glColor3f(1, 0, 0)
+           glBegin(GL_QUADS)
+           for i in range(len(quads)):
+               point1 = quads[i][0]
+               point2 = quads[i][1]
+               glVertex2f(point1[0], point1[1])
+               glVertex2f(point2[0], point1[1])
+               glVertex2f(point2[0], point2[1])
+               glVertex2f(point1[0], point2[1])
+           glEnd()
+    '''
+
     glColor(0, 0, 0)
     glLineWidth(5)
-
 
     if selectedPanel == panelOptions[0]:
         pencilDraw()
 
     for i in range(len(pencilPoints)):
-        for j in range(len(pencilPoints[i])-1):
-            point1=pencilPoints[i][j]
-            point2=pencilPoints[i][j+1]
+        for j in range(len(pencilPoints[i]) - 1):
+            point1 = pencilPoints[i][j]
+            point2 = pencilPoints[i][j + 1]
 
             glBegin(GL_LINES)
             glVertex2f(point1[0], point1[1])
             glVertex2f(point2[0], point2[1])
             glEnd()
-
 
     glColor(1, 1, 1)
     glLineWidth(20)
@@ -271,26 +396,18 @@ def draw():  # beyaz ekrana yapılacak cizim
         eraser()
 
     for i in range(len(eraserPoints)):
-        for j in range(len(eraserPoints[i])-1):
-            point1=eraserPoints[i][j]
-            point2=eraserPoints[i][j+1]
+        for j in range(len(eraserPoints[i]) - 1):
+            point1 = eraserPoints[i][j]
+            point2 = eraserPoints[i][j + 1]
 
             glBegin(GL_LINES)
             glVertex2f(point1[0], point1[1])
             glVertex2f(point2[0], point2[1])
             glEnd()
 
-    '''
-    if selectedPanel == panelOptions[1]:
-        #eraser()
-        glPointSize(15.0)
-        glColor(1, 1, 1)
-        glBegin(GL_POINTS)
-        for i in range(len(eraserPoints)):
-            searchAndRemove(i)
-        glEnd()'''
     if selectedPanel == panelOptions[2]:
         quadDraw()
+
     if len(quads) > 0:
         glColor3f(1, 0, 0)
         glBegin(GL_QUADS)
@@ -302,6 +419,10 @@ def draw():  # beyaz ekrana yapılacak cizim
             glVertex2f(point2[0], point2[1])
             glVertex2f(point1[0], point2[1])
         glEnd()
+
+
+    print(actionsNames)
+
 
 def controlPanel():  # panel
     global selectedPencil
@@ -338,6 +459,7 @@ def paint():  # Ana Fonksiyon
     controlPanel()
     draw()
     glutSwapBuffers()
+
 
 def main():
     global windowWidth
