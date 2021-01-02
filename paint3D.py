@@ -83,9 +83,9 @@ def convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY):  # convert 
 
 
 def mouseFunction(*args):
-    global selectedPanel, panelOptions, isFirst, isDrawing, isClicked
-    global mousePositionX, mousePositionY, selectedPencil, eraserPoints, quadPoints, quads
-    global mouseDrawPositionX, mouseDrawPositionY, points, actionsNames, actionsPoints
+    global selectedPanel, panelOptions, isDrawing, isClicked
+    global mousePositionX, mousePositionY, mouseDrawPositionX, mouseDrawPositionY
+    global points, eraserPoints, pencilPoints, quadPoints, quads, actionsNames, actionsPoints
 
     mousePositionX = args[2]
     mousePositionY = args[3]
@@ -154,7 +154,6 @@ def mouseFunction(*args):
                     actionsPoints.append(temp)
                     eraserPoints.clear()
 
-
             selectedPanel = panelOptions[2]
             actionsNames.append(selectedPanel)
 
@@ -200,48 +199,100 @@ def mouseFunction(*args):
 
 
 def mouseControl(mx, my):
-    global mouseDrawPositionX, mouseDrawPositionY, quadPoints, quads
+    global mouseDrawPositionX, mouseDrawPositionY
+
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
 
-    if mousePositionY > 110 and selectedPanel == panelOptions[2]:
+
+def pencilDrawing(points):  # Kalemin cizim yaptıgı fonksiyon
+
+    glColor(0, 0, 0)
+    glLineWidth(5)
+
+    for i in range(len(points)):
+        for j in range(len(points[i]) - 1):
+            point1 = points[i][j]
+            point2 = points[i][j + 1]
+
+            glBegin(GL_LINES)
+            glVertex2f(point1[0], point1[1])
+            glVertex2f(point2[0], point2[1])
+            glEnd()
+
+
+def eraser(points):
+    glColor(1, 1, 1)
+    glLineWidth(20)
+
+    for i in range(len(points)):
+        for j in range(len(points[i]) - 1):
+            point1 = points[i][j]
+            point2 = points[i][j + 1]
+
+            glBegin(GL_LINES)
+            glVertex2f(point1[0], point1[1])
+            glVertex2f(point2[0], point2[1])
+            glEnd()
+
+
+def quadDraw(points):
+
+    if len(points) > 0:
+        glColor3f(1, 0, 0)
+        glBegin(GL_QUADS)
+        for i in range(len(points)):
+            point1 = points[i][0]
+            point2 = points[i][1]
+            glVertex2f(point1[0], point1[1])
+            glVertex2f(point2[0], point1[1])
+            glVertex2f(point2[0], point2[1])
+            glVertex2f(point1[0], point2[1])
+        glEnd()
+
+
+def currentPencilDrawing():  # Kalemin anlık cizim yaptıgı fonksiyon
+    global mouseDrawPositionX, mouseDrawPositionY
+    global isClicked, isDrawing, points
+
+    glColor(0, 0, 0)
+    glLineWidth(5)
+
+    if isClicked and isDrawing:
+        point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
+        points.append(point)
+        for j in range(len(points) - 1):
+            glBegin(GL_LINES)
+            glVertex2f(points[j][0], points[j][1])
+            glVertex2f(points[j + 1][0], points[j + 1][1])
+            glEnd()
+
+
+def currentEraser():
+    global mouseDrawPositionX, mouseDrawPositionY
+    global isClicked, isDrawing, points
+
+    glColor(1, 1, 1)
+    glLineWidth(20)
+
+    if isClicked and isDrawing:
+        point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
+        points.append(point)
+        for j in range(len(points) - 1):
+            glBegin(GL_LINES)
+            glVertex2f(points[j][0], points[j][1])
+            glVertex2f(points[j + 1][0], points[j + 1][1])
+            glEnd()
+
+
+def currentQuadDraw():  # Dinamik olarak Dörtgeni cizdirir
+    global mouseDrawPositionX, mouseDrawPositionY, quadPoints
+
+    if isClicked and isDrawing:
         if len(quadPoints) > 1:
             quadPoints.pop()
         quadPoints.append(convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY))
 
-
-def pencilDraw():  # Kalemin cizim yaptıgı fonksiyon
-    global mousePositionX, mousePositionY
-    global mouseDrawPositionX, mouseDrawPositionY
-    global pencilPoints, isClicked, isDrawing, points
-
-    if isClicked and isDrawing:
-        point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
-        points.append(point)
-        for j in range(len(points) - 1):
-            glBegin(GL_LINES)
-            glVertex2f(points[j][0], points[j][1])
-            glVertex2f(points[j + 1][0], points[j + 1][1])
-            glEnd()
-
-
-def eraser():
-    global mousePositionX, mousePositionY
-    global mouseDrawPositionX, mouseDrawPositionY
-    global pencilPoints, isClicked, isDrawing, points
-
-    if isClicked and isDrawing:
-        point = convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY)
-        points.append(point)
-        for j in range(len(points) - 1):
-            glBegin(GL_LINES)
-            glVertex2f(points[j][0], points[j][1])
-            glVertex2f(points[j + 1][0], points[j + 1][1])
-            glEnd()
-
-
-def quadDraw():  # Dinamik olarak Dörtgeni cizdirir
-    global quadPoints
     if len(quadPoints) == 2:
         point1 = [quadPoints[0][0], quadPoints[0][1]]
         point2 = [quadPoints[1][0], quadPoints[1][1]]
@@ -252,17 +303,6 @@ def quadDraw():  # Dinamik olarak Dörtgeni cizdirir
         glVertex2f(point2[0], point2[1])
         glVertex2f(point1[0], point2[1])
         glEnd()
-
-
-def searchAndRemove(idx):
-    global pencilPoints, eraserPoints
-    for i in range(len(pencilPoints)):
-        if len(eraserPoints) > idx:
-            if (abs(pencilPoints[i][0] - eraserPoints[idx][0]) <= 0.01 and abs(
-                    pencilPoints[i][1] - eraserPoints[idx][1]) <= 0.01):
-                pencilPoints.pop(i)
-                return True
-    return False
 
 
 def paintBackground(r, g, b):
@@ -297,159 +337,79 @@ def display(id):
     glFlush()
 
 
+def oldDraw():
+    global actionsNames, actionsPoints, panelOptions
+
+    for k in range(len(actionsNames) - 1):
+
+        if (actionsNames[k] == panelOptions[0]):
+            pencilDrawing(actionsPoints[k])
+
+        if (actionsNames[k] == panelOptions[1]):
+            eraser(actionsPoints[k])
+
+        if (actionsNames[k] == panelOptions[2]):
+            quadDraw(actionsPoints[k])
+
+
+def currentDrawing():
+    global panelOptions, selectedPanel, pencilPoints, eraserPoints, quads
+
+    if selectedPanel == panelOptions[0]:
+        currentPencilDrawing()
+        pencilDrawing(pencilPoints)
+
+    if selectedPanel == panelOptions[1]:
+        currentEraser()
+        eraser(eraserPoints)
+
+    if selectedPanel == panelOptions[2]:
+        currentQuadDraw()
+        quadDraw(quads)
+
+
 def draw():  # beyaz ekrana yapılacak cizim
-    global panelOptions, selectedPanel, pencilPoints
-    global quadPoints, quads, actionsPoints, actionsNames
 
     glViewport(0, 0, 1540, 735)
     paintBackground(1, 1, 1)
 
+    oldDraw()
 
-    for k in range(len(actionsNames)-1) :
-
-        glColor(0, 0, 0)
-        glLineWidth(5)
-
-        if(actionsNames[k] == panelOptions[0]):
-            for i in range(len(actionsPoints[k])):
-               for j in range(len(actionsPoints[k][i]) - 1):
-
-                   point1 = actionsPoints[k][i][j]
-                   point2 = actionsPoints[k][i][j + 1]
-
-                   glBegin(GL_LINES)
-                   glVertex2f(point1[0], point1[1])
-                   glVertex2f(point2[0], point2[1])
-                   glEnd()
-
-
-        glColor(1, 1, 1)
-        glLineWidth(20)
-
-        if (actionsNames[k] == panelOptions[1]):
-            for i in range(len(actionsPoints[k])):
-                for j in range(len(actionsPoints[k][i]) - 1):
-                    point1 = actionsPoints[k][i][j]
-                    point2 = actionsPoints[k][i][j + 1]
-
-                    glBegin(GL_LINES)
-                    glVertex2f(point1[0], point1[1])
-                    glVertex2f(point2[0], point2[1])
-                    glEnd()
-
-        glColor3f(1, 0, 0)
-
-        if (actionsNames[k] == panelOptions[2]):
-            for i in range(len(actionsPoints[k])):
-
-                for j in range(len(actionsPoints[k][i]) - 1):
-
-                    point1 = actionsPoints[k][i][j]
-                    point2 = actionsPoints[k][i][j + 1]
-
-                    glBegin(GL_QUADS)
-                    glVertex2f(point1[0], point1[1])
-                    glVertex2f(point2[0], point1[1])
-                    glVertex2f(point2[0], point2[1])
-                    glVertex2f(point1[0], point2[1])
-                    glEnd()
-
-
-    '''
-
-        if selectedPanel == panelOptions[2]:
-               quadDraw()
-
-        if len(quads) > 0:
-           glColor3f(1, 0, 0)
-           glBegin(GL_QUADS)
-           for i in range(len(quads)):
-               point1 = quads[i][0]
-               point2 = quads[i][1]
-               glVertex2f(point1[0], point1[1])
-               glVertex2f(point2[0], point1[1])
-               glVertex2f(point2[0], point2[1])
-               glVertex2f(point1[0], point2[1])
-           glEnd()
-    '''
-
-    glColor(0, 0, 0)
-    glLineWidth(5)
-
-    if selectedPanel == panelOptions[0]:
-        pencilDraw()
-
-    for i in range(len(pencilPoints)):
-        for j in range(len(pencilPoints[i]) - 1):
-            point1 = pencilPoints[i][j]
-            point2 = pencilPoints[i][j + 1]
-
-            glBegin(GL_LINES)
-            glVertex2f(point1[0], point1[1])
-            glVertex2f(point2[0], point2[1])
-            glEnd()
-
-    glColor(1, 1, 1)
-    glLineWidth(20)
-
-    if selectedPanel == panelOptions[1]:
-        eraser()
-
-    for i in range(len(eraserPoints)):
-        for j in range(len(eraserPoints[i]) - 1):
-            point1 = eraserPoints[i][j]
-            point2 = eraserPoints[i][j + 1]
-
-            glBegin(GL_LINES)
-            glVertex2f(point1[0], point1[1])
-            glVertex2f(point2[0], point2[1])
-            glEnd()
-
-    if selectedPanel == panelOptions[2]:
-        quadDraw()
-
-    if len(quads) > 0:
-        glColor3f(1, 0, 0)
-        glBegin(GL_QUADS)
-        for i in range(len(quads)):
-            point1 = quads[i][0]
-            point2 = quads[i][1]
-            glVertex2f(point1[0], point1[1])
-            glVertex2f(point2[0], point1[1])
-            glVertex2f(point2[0], point2[1])
-            glVertex2f(point1[0], point2[1])
-        glEnd()
-
-
-    print(actionsNames)
+    currentDrawing()
 
 
 def controlPanel():  # panel
-    global selectedPencil
     global panelOptions
+
     glViewport(0, 735, 1540, 110)
     paintBackground(1, 0, 0)
+
     glViewport(0, 735, 100, 110)
+
     if selectedPanel == panelOptions[0]:
         paintBackground(0.6, 0.6, 0.6)
     else:
         paintBackground(0.9, 0.9, 0.9)
 
     display(pencilTextureId)
+
     glViewport(100, 735, 100, 110)
+
     if selectedPanel == panelOptions[1]:
         paintBackground(0.6, 0.6, 0.6)
     else:
         paintBackground(0.9, 0.9, 0.9)
+
     display(eraserTextureId)
+
     glViewport(200, 735, 100, 110)
+
     if selectedPanel == panelOptions[2]:
         paintBackground(0.6, 0.6, 0.6)
     else:
         paintBackground(0.9, 0.9, 0.9)
+
     display(quadTextureId)
-    glViewport(300, 735, 100, 110)
-    paintBackground(0, 1, 0)
 
 
 def paint():  # Ana Fonksiyon
@@ -464,6 +424,7 @@ def paint():  # Ana Fonksiyon
 def main():
     global windowWidth
     global windowHeight
+
     glutInit(sys.argv)
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE)
     glutInitWindowSize(windowWidth, windowHeight)
