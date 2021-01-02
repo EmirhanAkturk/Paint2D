@@ -356,16 +356,16 @@ def currentDrawing():
     global panelOptions, selectedPanel, pencilPoints, eraserPoints, quads
 
     if selectedPanel == panelOptions[0]:
-        currentPencilDrawing()
         pencilDrawing(pencilPoints)
+        currentPencilDrawing()
 
     if selectedPanel == panelOptions[1]:
-        currentEraser()
         eraser(eraserPoints)
+        currentEraser()
 
     if selectedPanel == panelOptions[2]:
-        currentQuadDraw()
         quadDraw(quads)
+        currentQuadDraw()
 
 
 def draw():  # beyaz ekrana yapılacak cizim
