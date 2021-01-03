@@ -69,6 +69,8 @@ def LoadTexture(file):
 
 def InitGL():
     global pencilTextureId, eraserTextureId, quadTextureId
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glActiveTexture(GL_TEXTURE0)
     pencilTextureId = LoadTexture("./img/pencil.png")
     eraserTextureId = LoadTexture("./img/eraser.png")
@@ -299,12 +301,6 @@ def undoDrawAction():
                 #temp=actionsPoints[len(actionsPoints)-1]
                 actionsPoints[len(actionsPoints)-1].pop()
 
-
-
-
-
-
-
 def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
 
     for i in range(len(pencilPoints)):
@@ -361,7 +357,7 @@ def currentPencilDrawing():  # Kalemin anlık cizim yaptıgı fonksiyon
     global isClicked, isDrawing, points, pointSize
     global isRedSelected,isGreenSelected,isBlueSelected
 
-    glColor(isRedSelected,isGreenSelected,isBlueSelected)
+    glColor(isRedSelected, isGreenSelected, isBlueSelected)
     glLineWidth(pointSize)
 
     if isClicked and isDrawing:
@@ -408,7 +404,7 @@ def currentQuadDraw():  # Dinamik olarak Dörtgeni cizdirir
         point1 = [quadPoints[0][0], quadPoints[0][1]]
         point2 = [quadPoints[1][0], quadPoints[1][1]]
 
-        glColor(isRedSelected, isGreenSelected, isBlueSelected)
+        glColor4f(isRedSelected, isGreenSelected, isBlueSelected,0.5)
         glBegin(GL_QUADS)
         glVertex2f(point1[0], point1[1])
         glVertex2f(point2[0], point1[1])
