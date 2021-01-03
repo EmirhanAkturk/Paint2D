@@ -213,6 +213,9 @@ def mouseFunction(*args):
                 isBlueSelected = 0
             else:
                 isBlueSelected = 1
+        elif mousePositionY<110 and 600 < mousePositionX < 700:
+            undoDrawAction()
+
 
         elif mousePositionY > 110 and selectedPanel == panelOptions[2]:  # farenin ilk dokunusunda koordinat alır
             if len(quadPoints) < 1:
@@ -276,6 +279,30 @@ def mouseControl(mx, my):
 
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
+
+def undoDrawAction():
+    global actionsNames,actionsPoints,pencilPoints
+    if selectedPanel==panelOptions[0] and len(pencilPoints)>0:
+        pencilPoints.pop()
+
+    elif selectedPanel==panelOptions[1] and len(eraserPoints)>0:
+        print("Ayse")
+        eraserPoints.pop()
+
+    elif selectedPanel==panelOptions[2] and len(quads)>0:
+        print("Serpil")
+        quads.pop()
+    else:
+        if len(actionsPoints) >0:
+            if len(actionsPoints[len(actionsPoints)-1])>0:
+                print("Ammar")
+                #temp=actionsPoints[len(actionsPoints)-1]
+                actionsPoints[len(actionsPoints)-1].pop()
+
+
+
+
+
 
 
 def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
@@ -511,6 +538,9 @@ def controlPanel():  # panel
         paintBackground(0, 0, 0.5)
     else:
         paintBackground(0, 0, 1)
+
+    glViewport(600,735,100,110)
+    paintBackground(0,0,0)
 
 
 def paint():  # Ana Fonksiyon
