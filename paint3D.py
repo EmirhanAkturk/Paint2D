@@ -101,7 +101,11 @@ def mouseFunction(*args):
 
         if (mousePositionX < 100 and mousePositionY < 110):
 
-            if (len(actionsNames) >= 1):
+            if (len(actionsNames) == 0):
+                selectedPanel = panelOptions[0]
+                actionsNames.append(selectedPanel)
+
+            elif (len(actionsNames) >= 1):
 
                 if (actionsNames[len(actionsNames) - 1] == panelOptions[1]):
 
@@ -109,25 +113,37 @@ def mouseFunction(*args):
                     actionsPoints.append(temp)
                     eraserPoints.clear()
 
+                    selectedPanel = panelOptions[0]
+                    actionsNames.append(selectedPanel)
+
                 elif (actionsNames[len(actionsNames) - 1] == panelOptions[2]):
 
                     temp = quads.copy()
                     actionsPoints.append(temp)
                     quads.clear()
 
-            selectedPanel = panelOptions[0]
-            actionsNames.append(selectedPanel)
+                    selectedPanel = panelOptions[0]
+                    actionsNames.append(selectedPanel)
+
+
             # eraserPoints.clear()
 
         elif 100 < mousePositionX < 200 and mousePositionY < 110:
 
-            if (len(actionsNames) >= 1):
+            if (len(actionsNames) == 0):
+                selectedPanel = panelOptions[1]
+                actionsNames.append(selectedPanel)
+
+            elif (len(actionsNames) >= 1):
 
                 if (actionsNames[len(actionsNames) - 1] == panelOptions[0]):
 
                     temp = pencilPoints.copy()
                     actionsPoints.append(temp)
                     pencilPoints.clear()
+
+                    selectedPanel = panelOptions[1]
+                    actionsNames.append(selectedPanel)
 
                 elif (actionsNames[len(actionsNames) - 1] == panelOptions[2]):
 
@@ -135,18 +151,26 @@ def mouseFunction(*args):
                     actionsPoints.append(temp)
                     quads.clear()
 
-            selectedPanel = panelOptions[1]
-            actionsNames.append(selectedPanel)
+                    selectedPanel = panelOptions[1]
+                    actionsNames.append(selectedPanel)
+
 
         elif 200 < mousePositionX < 300 and mousePositionY < 110:
 
-            if (len(actionsNames) > 1):
+            if (len(actionsNames) == 0):
+                selectedPanel = panelOptions[2]
+                actionsNames.append(selectedPanel)
+
+            elif (len(actionsNames) >= 1):
 
                 if (actionsNames[len(actionsNames) - 1] == panelOptions[0]):
 
                     temp = pencilPoints.copy()
                     actionsPoints.append(temp)
                     pencilPoints.clear()
+
+                    selectedPanel = panelOptions[2]
+                    actionsNames.append(selectedPanel)
 
                 elif (actionsNames[len(actionsNames) - 1] == panelOptions[1]):
 
@@ -154,8 +178,9 @@ def mouseFunction(*args):
                     actionsPoints.append(temp)
                     eraserPoints.clear()
 
-            selectedPanel = panelOptions[2]
-            actionsNames.append(selectedPanel)
+                    selectedPanel = panelOptions[2]
+                    actionsNames.append(selectedPanel)
+
 
         elif mousePositionY > 110 and selectedPanel == panelOptions[2]:  # farenin ilk dokunusunda koordinat alır
             if len(quadPoints) < 1:
@@ -340,7 +365,7 @@ def display(id):
 def oldDraw():
     global actionsNames, actionsPoints, panelOptions
 
-    for k in range(len(actionsNames) - 1):
+    for k in range(len(actionsPoints)):
 
         if (actionsNames[k] == panelOptions[0]):
             pencilDrawing(actionsPoints[k])
@@ -376,7 +401,6 @@ def draw():  # beyaz ekrana yapılacak cizim
     oldDraw()
 
     currentDrawing()
-
 
 def controlPanel():  # panel
     global panelOptions
