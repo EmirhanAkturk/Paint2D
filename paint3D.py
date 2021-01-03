@@ -71,8 +71,9 @@ def InitGL():
     global pencilTextureId, eraserTextureId, quadTextureId
     glActiveTexture(GL_TEXTURE0)
     pencilTextureId = LoadTexture("./img/pencil.png")
-    eraserTextureId = LoadTexture("./img/eraser2.png")
-    quadTextureId = LoadTexture("./img/quads.png")
+    eraserTextureId = LoadTexture("./img/eraser.png")
+    quadTextureId = LoadTexture("./img/quad.jpg")
+
     glEnable(GL_TEXTURE_2D)
     glClearColor(0.0, 0.0, 0.0, 0.0)  # darkmode
     glMatrixMode(GL_PROJECTION)
@@ -380,6 +381,7 @@ def currentQuadDraw():  # Dinamik olarak Dörtgeni cizdirir
         point1 = [quadPoints[0][0], quadPoints[0][1]]
         point2 = [quadPoints[1][0], quadPoints[1][1]]
 
+        glColor(isRedSelected, isGreenSelected, isBlueSelected)
         glBegin(GL_QUADS)
         glVertex2f(point1[0], point1[1])
         glVertex2f(point2[0], point1[1])
