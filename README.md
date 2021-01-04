@@ -1,6 +1,6 @@
 OpenGL paint2D uygulaması.
 
-Kalemle çizim yapabilen, Quad çizebilen, Yapılan çizimleri silebilen ve yapılan değişiklikleri geri alabilen,çizimlerin renklerini değiştirebilen ve çizim üzerine çizim yapabilen 
+Kalem ve suluboya ile  çizim yapabilen, Quad çizebilen, Yapılan çizimleri silebilen ,yapılan değişiklikleri geri alabilen,çizimlerin renklerini değiştirebilen ve çizim üzerine çizim yapabilen 
 openGL paint2D uygulaması.
 
 
