@@ -26,13 +26,7 @@ pencilPoints = []
 eraserPoints = []
 waterColorPoints=[]
 
-pencilTextureId = 0
-eraserTextureId = 0
-quadTextureId = 0
-undoTextureId = 0
-
 textureIDs=[]
-
 
 isClicked = False
 isDrawing = False
@@ -73,14 +67,10 @@ def LoadTexture(file):
 
 
 def InitGL():
-    global pencilTextureId, eraserTextureId, quadTextureId,undoTextureId,textureIDs
+    global textureIDs
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     glActiveTexture(GL_TEXTURE0)
-    '''pencilTextureId = LoadTexture("./img/pencil.png")
-    eraserTextureId = LoadTexture("./img/eraser.png")
-    quadTextureId = LoadTexture("./img/quad.jpg")
-    undoTextureId = LoadTexture("./img/undo.png")'''
 
     textureIDs.append(LoadTexture("./img/pencil.png"))
     textureIDs.append(LoadTexture("./img/eraser.png"))
@@ -624,10 +614,10 @@ def draw():  # beyaz ekrana yapılacak cizim
 
 def controlPanel():  # panel
 
-    glViewport(0, 735, 1540, 110)
+    glViewport(0, 735, 1540, 110) # control panelini oluşturur
     paintBackground(0.4, 0.4, 0.4)
 
-    glViewport(0, 735, 100, 110)
+    glViewport(0, 735, 100, 110) #kalem butonu
     if selectedPanel != panelOptions[0]:
         paintBackground(0.6, 0.6, 0.6)
     else:
@@ -635,7 +625,7 @@ def controlPanel():  # panel
 
     display(textureIDs[0])
 
-    glViewport(100, 735, 100, 110)
+    glViewport(100, 735, 100, 110)#silgi butonu
     if selectedPanel != panelOptions[1]:
         paintBackground(0.6, 0.6, 0.6)
     else:
@@ -643,7 +633,7 @@ def controlPanel():  # panel
 
     display(textureIDs[1])
 
-    glViewport(200, 735, 100, 110)
+    glViewport(200, 735, 100, 110)#dortgen sekil butonu
     if selectedPanel != panelOptions[2]:
         paintBackground(0.6, 0.6, 0.6)
     else:
@@ -651,7 +641,7 @@ def controlPanel():  # panel
 
     display(textureIDs[2])
 
-    glViewport(300,735,100,110)
+    glViewport(300,735,100,110)#sulu boya butonu
     if selectedPanel !=panelOptions[3]:
         paintBackground(0.6,0.6,0.6)
     else:
@@ -659,7 +649,7 @@ def controlPanel():  # panel
 
     display(textureIDs[3])
 
-    glViewport(400, 735, 100, 110)
+    glViewport(400, 735, 100, 110) # geri alma butonu
     if isUndoClicked == True:
         paintBackground(0.9, 0.9, 0.9)
     else:
@@ -667,25 +657,53 @@ def controlPanel():  # panel
 
     display(textureIDs[4])
 
-    glViewport(500, 735, 100, 110)
+    glViewport(500, 735, 100, 110) #kırmızı renk butonu
     if isRedSelected != 1:
         paintBackground(0.5, 0, 0)
     else:
         paintBackground(1, 0, 0)
 
-    glViewport(600, 735, 100, 110)
+    glViewport(600, 735, 100, 110) #yeşil renk butonu
     if isGreenSelected != 1:
         paintBackground(0, 0.5, 0)
     else:
         paintBackground(0, 1, 0)
 
-    glViewport(700, 735, 100, 110)
+    glViewport(700, 735, 100, 110) # mavi renk butonu
     if isBlueSelected != 1:
         paintBackground(0, 0, 0.5)
     else:
         paintBackground(0, 0, 1)
 
+    glViewport(800, 735, 100, 110)  # beyaz renk butonu
+    if isRedSelected == 1 and isBlueSelected == 1 and isGreenSelected == 1:
+        paintBackground(1, 1, 1)
+    else:
+        paintBackground(0.5, 0.5, 0.5)
 
+    glViewport(900, 735, 100, 110)  # sarı renk butonu
+    if isRedSelected == 1 and isGreenSelected == 1 and isBlueSelected != 1:
+        paintBackground(1, 1, 0)
+    else:
+        paintBackground(0.5, 0.5, 0)
+
+    glViewport(1000, 735, 100, 110)  # mor renk butonu
+    if isRedSelected == 1  and isGreenSelected != 1 and isBlueSelected == 1:
+        paintBackground(1, 0, 1)
+    else:
+        paintBackground(0.5, 0, 0.5)
+
+    glViewport(1100, 735, 100, 110)  # cyan renk butonu
+    if isRedSelected != 1 and isBlueSelected == 1 and isGreenSelected == 1:
+        paintBackground(0, 1, 1)
+    else:
+        paintBackground(0, 0.5, 0.5)
+
+    glViewport(1200, 735, 100, 110)  # siyah renk butonu
+    if isRedSelected != 1 and isBlueSelected != 1 and isGreenSelected != 1:
+        paintBackground(0, 0, 0)
+    else:
+        paintBackground(0.25, 0.25, 0.25)
 
 def keyboardFunc(*args):
     global pointSize
