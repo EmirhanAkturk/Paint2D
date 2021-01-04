@@ -4,6 +4,9 @@
     Emirhan Aktürk          19120205058
     Fatih Dursun Üzer       18120205041
     Osman Yasir Çankaya     18120205030
+
+    Paint2D uygulaması.
+    Kalem,Silgi,Suluboya ve Şekil çizdirebilen  OPENGL paint uygulaması
 '''
 
 
@@ -15,41 +18,41 @@ import sys
 
 from DrawAction import DrawAction
 
-windowWidth = 1920
-windowHeight = 1080
+windowWidth = 1920 #Pencere genişliği
+windowHeight = 1080 #Pencere Yüksekliği
 
-mousePositionX = 0
-mousePositionY = 0
+mousePositionX = 0 #Mouse'un tıklama anındaki X konumu
+mousePositionY = 0 #Mouse'un tıklama anındaki Y konumu
 
-mouseDrawPositionX = 0
-mouseDrawPositionY = 0
+mouseDrawPositionX = 0 #Mouse'un çizim anındaki X konumu
+mouseDrawPositionY = 0 #Mouse'un çizim anındaki Y konumu
 
 
-pointSize = 5.0
-points = []
+pointSize = 5.0 # Kalem,Suluboya fırçası ve silgi için boyut
+points = [] # Anlık çizimin noktalarını tutan liste
 
-pencilPoints = []
-eraserPoints = []
-waterColorPoints=[]
+pencilPoints = [] #Kalem paneli seçiliyken bitmiş olan tüm çizimleri tutan liste
+eraserPoints = [] # silgi  paneli seçiliyken bitmiş olan tüm çizimleri tutan liste
+waterColorPoints=[] # suluboya paneli seçiliyken bitmiş olan tüm çizimleri tutan liste
 
-textureIDs=[]
+textureIDs=[] #Texture id lerini tutan liste
 
-isClicked = False
-isDrawing = False
-isUndoClicked = False
+isClicked = False #Panele tıklanıp tıklanılmadığını kontrol eden değişken
+isDrawing = False #Çizim yapılıp yapılamayacağını kontrol eden değişken
+isUndoClicked = False #Geri alma butonuna tıklanıp tıklanılmadığını kontrol eden değişken
 
-isRedSelected = 0
-isGreenSelected = 0
-isBlueSelected = 0
+isRedSelected = 0 #Kırmızı renk butonunun seçilip seçilmediğini kontrol eden değişken
+isGreenSelected = 0 #Yeşil renk butonunun seçilip seçilmediğini kontrol eden değişken
+isBlueSelected = 0 #Mavi renk butonunun seçilip seçilmediğini kontrol eden değişken
 
-panelOptions = ["Pencil", "Eraser", "Quads","WaterColor"]  # Ekleme yapılacak
-selectedPanel = str()
+panelOptions = ["Pencil", "Eraser", "Quads","WaterColor"]  #Panelde bulunan butonların listesi
+selectedPanel = str() #Seçilen paneli tutan string
 
-quads = []  # quadları tutan liste
-quadPoints = []  # quadın koordinatlarını tutan liste
+quads = []  # Quad paneli seçiliyken bitmiş olan tüm çizimleri tutan liste
+quadPoints = []  #  Anlık quad çiziminin noktalarını tutan liste
 
-actionsPoints = []
-actionsNames = []
+actionsPoints = [] # Şu an seçili olan panelden önceki tüm çizimleri tutan liste
+actionsNames = [] # Seçilen panelleri tutan liste
 
 
 def LoadTexture(file):
@@ -85,14 +88,14 @@ def InitGL():
     textureIDs.append(LoadTexture("./img/undo.png"))
 
     glEnable(GL_TEXTURE_2D)
-    glClearColor(0.0, 0.0, 0.0, 0.0)  # darkmode
+    glClearColor(0.0, 0.0, 0.0, 0.0)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
 
-def keyboardFunc(*args):
+def keyboardFunc(*args): # w tuşu basıldığında pointSize'ı arttıran s tuşu basıldığında pointSize'ı azaltan fonksiyon
     global pointSize
     if (args[0] == b'w' or args[0] == b'W') and selectedPanel != panelOptions[2]:
         if pointSize < 100:
@@ -417,7 +420,7 @@ def mouseControl(mx, my):
     mouseDrawPositionY = my
 
 
-def undoDrawAction():
+def undoDrawAction(): #Yapılan en son değişikliği geri alma fonksiyonu
     global actionsPoints, pencilPoints,quads,waterColorPoints
 
     if selectedPanel == panelOptions[0] and len(pencilPoints) > 0:
@@ -457,7 +460,7 @@ def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
             glVertex2f(point2[0], point2[1])
             glEnd()
 
-def waterColorDrawing(waterColorPoints):  # Kalemin cizim yaptıgı fonksiyon
+def waterColorDrawing(waterColorPoints):  # Sulu boya fırçasının cizim yaptıgı fonksiyon
 
     for i in range(len(waterColorPoints)):
         for j in range(len(waterColorPoints[i].points) - 1):
@@ -489,7 +492,7 @@ def eraser(eraserPoints):
             glEnd()
 
 
-def quadDraw(quadsPoints):
+def quadDraw(quadsPoints): #Quad'ı statik olarak gösteren fonksiyon
     if len(quadsPoints) > 0:
 
         for i in range(len(quadsPoints)):
@@ -575,7 +578,7 @@ def currentQuadDraw():  # Dinamik olarak Dörtgeni cizdirir
         glEnd()
 
 
-def paintBackground(r, g, b):
+def paintBackground(r, g, b): #Arka planı aldığı parametrelere göre rgb olarak boyayan fonksiyon
     glColor3f(r, g, b)
     glBegin(GL_QUADS)
     glVertex2f(-1, 1)
@@ -585,10 +588,7 @@ def paintBackground(r, g, b):
     glEnd()
 
 
-def display(id):
-    """Glut display function."""
-    # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    # LoadTexture("img/pencil.png")
+def display(id): #Glut display fonksiyonu
     glBindTexture(GL_TEXTURE_2D, id)
     glBegin(GL_QUADS)
 
@@ -607,7 +607,7 @@ def display(id):
     glFlush()
 
 
-def oldDraw():
+def oldDraw(): #Eski çizimleri ekranda gösteren fonksiyon
 
     for k in range(len(actionsPoints)):
 
@@ -624,7 +624,7 @@ def oldDraw():
             waterColorDrawing(actionsPoints[k])
 
 
-def currentDrawing():
+def currentDrawing(): #Ekrana yapılan çizim esnasında çalışan fonksiyon
 
     if selectedPanel == panelOptions[0]:
         pencilDrawing(pencilPoints)
@@ -750,8 +750,6 @@ def controlPanel():  # panel
 
 def paint():  # Ana Fonksiyon
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    # gluPerspective( fovy, aspect, zNear, zFar )
-    # gluPerspective(150, 1.5, 1, 20)
     controlPanel()
     draw()
     glutSwapBuffers()
