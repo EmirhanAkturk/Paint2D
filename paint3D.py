@@ -34,7 +34,7 @@ undoTextureId = 0
 
 isClicked = False
 isDrawing = False
-isFirst = True
+isUndoClicked = False
 
 isRedSelected = 0
 isGreenSelected = 0
@@ -101,7 +101,7 @@ def mouseFunction(*args):
     global mousePositionX, mousePositionY, mouseDrawPositionX, mouseDrawPositionY
     global eraserPoints, pencilPoints, quadPoints, quads, actionsNames, actionsPoints
     global points, pointSize
-    global isRedSelected, isGreenSelected, isBlueSelected
+    global isRedSelected, isGreenSelected, isBlueSelected,isUndoClicked
 
     mousePositionX = args[2]
     mousePositionY = args[3]
@@ -230,15 +230,8 @@ def mouseFunction(*args):
                 isBlueSelected = 1
 
         elif mousePositionY < 110 and 600 < mousePositionX < 700: #undo secildi
-            isRedSelected = 0.6
-            isGreenSelected = 0.6
-            isBlueSelected = 0.6
-
+            isUndoClicked=True
             undoDrawAction()
-
-            isRedSelected = 1
-            isGreenSelected = 1
-            isBlueSelected = 1
 
 
         elif mousePositionY > 110 and selectedPanel == panelOptions[2]:  # farenin ilk dokunusunda koordinat alır
@@ -253,6 +246,7 @@ def mouseFunction(*args):
     elif args[0] == GLUT_LEFT_BUTTON and args[1] == GLUT_UP:  # Fareden el kaldırıldıgındaki son noktayı alır
         isClicked = False
         isDrawing = False
+        isUndoClicked=False
         print(args)
         if mousePositionY > 110 and selectedPanel == panelOptions[2]:
             if len(quadPoints) < 2:
@@ -517,7 +511,7 @@ def draw():  # beyaz ekrana yapılacak cizim
 def controlPanel():  # panel
 
     glViewport(0, 735, 1540, 110)
-    paintBackground(1, 0, 0)
+    paintBackground(0.6, 0.6, 0.6)
 
     glViewport(0, 735, 100, 110)
     if selectedPanel != panelOptions[0]:
@@ -562,20 +556,21 @@ def controlPanel():  # panel
         paintBackground(0, 0, 1)
 
     glViewport(600, 735, 100, 110)
-
-    paintBackground(isRedSelected, isGreenSelected, isBlueSelected)
-
+    if isUndoClicked==True:
+        paintBackground(0.9, 0.9, 0.9)
+    else:
+        paintBackground(0.6,0.6,0.6)
     display(undoTextureId)
 
 
 def keyboardFunc(*args):
     global pointSize
     if (args[0] == b'w' or args[0] == b'W') and selectedPanel != panelOptions[2]:
-        if pointSize < 20:
+        if pointSize < 100:
             pointSize += 10
     elif (args[0]==b's' or args[0] == b'S'):
-        if pointSize > 1:
-            pointSize -= 1
+        if pointSize > 5:
+            pointSize -= 5
 
     print(pointSize)
 
