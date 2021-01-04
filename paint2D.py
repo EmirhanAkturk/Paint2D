@@ -5,8 +5,13 @@
     Fatih Dursun Üzer       18120205041
     Osman Yasir Çankaya     18120205030
 
-    Paint2D uygulaması.
-    Kalem,Silgi,Suluboya ve Şekil çizdirebilen  OPENGL paint uygulaması
+    OpenGL paint2D uygulaması.
+
+Kalem ve suluboya ile çizim yapabilen, Quad çizebilen, Yapılan çizimleri silebilen ,yapılan değişiklikleri geri alabilen,
+çizimlerin renklerini değiştirebilen ve Stack veri yapısını kullanarak çizim üzerine çizim yapabilen openGL paint2D uygulaması.
+
+İstanbul Medeniyet Üniversitesi Bilgisayar Mühendisliği Öğrencilerinden : 
+Fatih Dursun Üzer,Emirhan Aktürk ve Osman Yasir Çankaya tarafından geliştirilmiştir.
 '''
 
 
