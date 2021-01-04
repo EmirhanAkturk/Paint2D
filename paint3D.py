@@ -17,7 +17,6 @@ mousePositionY = 0
 mouseDrawPositionX = 0
 mouseDrawPositionY = 0
 
-selectedPencil = 0
 
 pointSize = float()
 points = []
@@ -85,7 +84,7 @@ def InitGL():
 
 
 def convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY):  # convert mouse position to drawing axis position
-    point = []
+    point = list()
     point.append((mouseDrawPositionX - 770) / 770)
     point.append((110 + 367.5 - mouseDrawPositionY) / 367.5)
 
@@ -93,10 +92,10 @@ def convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY):  # convert 
 
 
 def mouseFunction(*args):
-    global selectedPanel, panelOptions, isDrawing, isClicked
+    global selectedPanel, isDrawing, isClicked
     global mousePositionX, mousePositionY, mouseDrawPositionX, mouseDrawPositionY
     global eraserPoints, pencilPoints, quadPoints, quads, actionsNames, actionsPoints
-    global points, pointSize, color
+    global points, pointSize
     global isRedSelected, isGreenSelected, isBlueSelected
 
     mousePositionX = args[2]
@@ -105,23 +104,23 @@ def mouseFunction(*args):
     mouseDrawPositionX = mousePositionX
     mouseDrawPositionY = mousePositionY
 
-    if (args[0] == GLUT_LEFT_BUTTON and args[1] == GLUT_DOWN):
+    if args[0] == GLUT_LEFT_BUTTON and args[1] == GLUT_DOWN:
         isClicked = True
 
-        if (mousePositionY > 110):
+        if mousePositionY > 110:
             isDrawing = True
 
-        if (mousePositionX < 100 and mousePositionY < 110):  # Kalem Secildi
+        if mousePositionX < 100 and mousePositionY < 110:  # Kalem Secildi
 
             pointSize = 5.0
 
-            if (len(actionsNames) == 0):
+            if len(actionsNames) == 0:
                 selectedPanel = panelOptions[0]
                 actionsNames.append(selectedPanel)
 
-            elif (len(actionsNames) >= 1):
+            elif len(actionsNames) >= 1:
 
-                if (actionsNames[len(actionsNames) - 1] == panelOptions[1]):
+                if actionsNames[len(actionsNames) - 1] == panelOptions[1]:
 
                     temp = eraserPoints.copy()
                     actionsPoints.append(temp)
@@ -130,7 +129,7 @@ def mouseFunction(*args):
                     selectedPanel = panelOptions[0]
                     actionsNames.append(selectedPanel)
 
-                elif (actionsNames[len(actionsNames) - 1] == panelOptions[2]):
+                elif actionsNames[len(actionsNames) - 1] == panelOptions[2]:
 
                     temp = quads.copy()
                     actionsPoints.append(temp)
@@ -142,18 +141,18 @@ def mouseFunction(*args):
             # eraserPoints.clear()
 
         elif 100 < mousePositionX < 200 and mousePositionY < 110:  # Silgi secildi
-            isRedSelected=1
-            isGreenSelected=1
-            isBlueSelected=1
+            isRedSelected = 1
+            isGreenSelected = 1
+            isBlueSelected = 1
 
             pointSize = 20.0
-            if (len(actionsNames) == 0):
+            if len(actionsNames) == 0:
                 selectedPanel = panelOptions[1]
                 actionsNames.append(selectedPanel)
 
-            elif (len(actionsNames) >= 1):
+            elif len(actionsNames) >= 1:
 
-                if (actionsNames[len(actionsNames) - 1] == panelOptions[0]):
+                if actionsNames[len(actionsNames) - 1] == panelOptions[0]:
 
                     temp = pencilPoints.copy()
                     actionsPoints.append(temp)
@@ -162,7 +161,7 @@ def mouseFunction(*args):
                     selectedPanel = panelOptions[1]
                     actionsNames.append(selectedPanel)
 
-                elif (actionsNames[len(actionsNames) - 1] == panelOptions[2]):
+                elif actionsNames[len(actionsNames) - 1] == panelOptions[2]:
 
                     temp = quads.copy()
                     actionsPoints.append(temp)
@@ -174,13 +173,13 @@ def mouseFunction(*args):
 
         elif 200 < mousePositionX < 300 and mousePositionY < 110:  # Quad secildi
             pointSize = 0.0
-            if (len(actionsNames) == 0):
+            if len(actionsNames) == 0:
                 selectedPanel = panelOptions[2]
                 actionsNames.append(selectedPanel)
 
-            elif (len(actionsNames) >= 1):
+            elif len(actionsNames) >= 1:
 
-                if (actionsNames[len(actionsNames) - 1] == panelOptions[0]):
+                if actionsNames[len(actionsNames) - 1] == panelOptions[0]:
 
                     temp = pencilPoints.copy()
                     actionsPoints.append(temp)
@@ -189,7 +188,7 @@ def mouseFunction(*args):
                     selectedPanel = panelOptions[2]
                     actionsNames.append(selectedPanel)
 
-                elif (actionsNames[len(actionsNames) - 1] == panelOptions[1]):
+                elif actionsNames[len(actionsNames) - 1] == panelOptions[1]:
 
                     temp = eraserPoints.copy()
                     actionsPoints.append(temp)
@@ -215,7 +214,7 @@ def mouseFunction(*args):
                 isBlueSelected = 0
             else:
                 isBlueSelected = 1
-        elif mousePositionY<110 and 600 < mousePositionX < 700:
+        elif mousePositionY < 110 and 600 < mousePositionX < 700:
             undoDrawAction()
 
 
@@ -245,7 +244,7 @@ def mouseFunction(*args):
 
             temp = DrawAction()
             temp.points = [point1, point2]
-            temp.color = [isRedSelected,isGreenSelected,isBlueSelected]
+            temp.color = [isRedSelected, isGreenSelected, isBlueSelected]
             temp.pointSize = 0.0
 
             quads.append(temp)
@@ -256,7 +255,7 @@ def mouseFunction(*args):
 
             temp = DrawAction()
             temp.points = points.copy()
-            temp.color = [isRedSelected,isGreenSelected,isBlueSelected]
+            temp.color = [isRedSelected, isGreenSelected, isBlueSelected]
             temp.pointSize = pointSize
 
             pencilPoints.append(temp)
@@ -267,7 +266,7 @@ def mouseFunction(*args):
 
             temp = DrawAction()
             temp.points = points.copy()
-            temp.color = [isRedSelected,isGreenSelected,isBlueSelected]
+            temp.color = [isRedSelected, isGreenSelected, isBlueSelected]
             temp.pointSize = pointSize
 
             eraserPoints.append(temp)
@@ -282,24 +281,23 @@ def mouseControl(mx, my):
     mouseDrawPositionX = mx
     mouseDrawPositionY = my
 
+
 def undoDrawAction():
-    global actionsNames,actionsPoints,pencilPoints
-    if selectedPanel==panelOptions[0] and len(pencilPoints)>0:
+    global actionsPoints, pencilPoints
+    if selectedPanel == panelOptions[0] and len(pencilPoints) > 0:
         pencilPoints.pop()
 
-    elif selectedPanel==panelOptions[1] and len(eraserPoints)>0:
-        print("Ayse")
+    elif selectedPanel == panelOptions[1] and len(eraserPoints) > 0:
         eraserPoints.pop()
 
-    elif selectedPanel==panelOptions[2] and len(quads)>0:
-        print("Serpil")
+    elif selectedPanel == panelOptions[2] and len(quads) > 0:
         quads.pop()
     else:
-        if len(actionsPoints) >0:
-            if len(actionsPoints[len(actionsPoints)-1])>0:
-                print("Ammar")
-                #temp=actionsPoints[len(actionsPoints)-1]
-                actionsPoints[len(actionsPoints)-1].pop()
+        if len(actionsPoints) > 0:
+            if len(actionsPoints[len(actionsPoints) - 1]) > 0:
+                # temp=actionsPoints[len(actionsPoints)-1]
+                actionsPoints[len(actionsPoints) - 1].pop()
+
 
 def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
 
@@ -321,8 +319,8 @@ def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
 def eraser(eraserPoints):
     for i in range(len(eraserPoints)):
         for j in range(len(eraserPoints[i].points) - 1):
-            color = eraserPoints[i].color
-            glColor(1,1,1)
+            #color = eraserPoints[i].color
+            glColor(1, 1, 1)
             glLineWidth(eraserPoints[i].pointSize)
 
             point1 = eraserPoints[i].points[j]
@@ -353,10 +351,7 @@ def quadDraw(quadsPoints):
 
 
 def currentPencilDrawing():  # Kalemin anlık cizim yaptıgı fonksiyon
-    global mouseDrawPositionX, mouseDrawPositionY
-    global isClicked, isDrawing, points, pointSize
-    global isRedSelected,isGreenSelected,isBlueSelected
-
+    global points
     glColor(isRedSelected, isGreenSelected, isBlueSelected)
     glLineWidth(pointSize)
 
@@ -371,11 +366,10 @@ def currentPencilDrawing():  # Kalemin anlık cizim yaptıgı fonksiyon
 
 
 def currentEraser():
-    global mouseDrawPositionX, mouseDrawPositionY
-    global isClicked, isDrawing, points, color, pointSize
-    global isRedSelected,isGreenSelected,isBlueSelected
+    global points
+    global isRedSelected, isGreenSelected, isBlueSelected
 
-    isRedSelected=1
+    isRedSelected = 1
     isGreenSelected = 1
     isBlueSelected = 1
 
@@ -393,7 +387,7 @@ def currentEraser():
 
 
 def currentQuadDraw():  # Dinamik olarak Dörtgeni cizdirir
-    global mouseDrawPositionX, mouseDrawPositionY, quadPoints
+    global quadPoints
 
     if isClicked and isDrawing:
         if len(quadPoints) > 1:
@@ -404,7 +398,7 @@ def currentQuadDraw():  # Dinamik olarak Dörtgeni cizdirir
         point1 = [quadPoints[0][0], quadPoints[0][1]]
         point2 = [quadPoints[1][0], quadPoints[1][1]]
 
-        glColor4f(isRedSelected, isGreenSelected, isBlueSelected,0.5)
+        glColor4f(isRedSelected, isGreenSelected, isBlueSelected, 0.5)
         glBegin(GL_QUADS)
         glVertex2f(point1[0], point1[1])
         glVertex2f(point2[0], point1[1])
@@ -446,22 +440,20 @@ def display(id):
 
 
 def oldDraw():
-    global actionsNames, actionsPoints, panelOptions
 
     for k in range(len(actionsPoints)):
 
-        if (actionsNames[k] == panelOptions[0]):
+        if actionsNames[k] == panelOptions[0]:
             pencilDrawing(actionsPoints[k])
 
-        if (actionsNames[k] == panelOptions[1]):
+        if actionsNames[k] == panelOptions[1]:
             eraser(actionsPoints[k])
 
-        if (actionsNames[k] == panelOptions[2]):
+        if actionsNames[k] == panelOptions[2]:
             quadDraw(actionsPoints[k])
 
 
 def currentDrawing():
-    global panelOptions, selectedPanel, pencilPoints, eraserPoints, quads
 
     if selectedPanel == panelOptions[0]:
         pencilDrawing(pencilPoints)
@@ -487,8 +479,6 @@ def draw():  # beyaz ekrana yapılacak cizim
 
 
 def controlPanel():  # panel
-    global panelOptions
-    global isRedSelected, isGreenSelected, isBlueSelected
 
     glViewport(0, 735, 1540, 110)
     paintBackground(1, 0, 0)
@@ -535,8 +525,16 @@ def controlPanel():  # panel
     else:
         paintBackground(0, 0, 1)
 
-    glViewport(600,735,100,110)
-    paintBackground(0,0,0)
+    glViewport(600, 735, 100, 110)
+    paintBackground(0, 0, 0)
+
+
+def keyboardFunc(*args):
+    global pointSize
+    if args[0] == b'+' and selectedPanel != panelOptions[2]:
+        pointSize += +5.0
+    elif args[0]==b'-' and pointSize>5:
+        pointSize-=5
 
 
 def paint():  # Ana Fonksiyon
@@ -561,6 +559,7 @@ def main():
     glutIdleFunc(paint)
     glutMouseFunc(mouseFunction)
     glutMotionFunc(mouseControl)
+    glutKeyboardFunc(keyboardFunc)
     InitGL()
     glutMainLoop()
 
