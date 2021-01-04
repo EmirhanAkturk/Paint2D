@@ -1,4 +1,9 @@
-'''final project '''
+'''
+    Final Project
+    Emirhan Aktürk
+    Fatih Dursun Üzer
+    Osman Yasir Çankaya
+'''
 
 
 from OpenGL.GL import *
@@ -86,6 +91,18 @@ def InitGL():
     glLoadIdentity()
 
 
+def keyboardFunc(*args):
+    global pointSize
+    if (args[0] == b'w' or args[0] == b'W') and selectedPanel != panelOptions[2]:
+        if pointSize < 100:
+            pointSize += 10
+    elif (args[0]==b's' or args[0] == b'S'):
+        if pointSize > 5:
+            pointSize -= 5
+
+    print(pointSize)
+
+
 def convertMousePosDrawAxis(mouseDrawPositionX, mouseDrawPositionY):  # convert mouse position to drawing axis position
     point = list()
     point.append((mouseDrawPositionX - 770) / 770)
@@ -110,7 +127,7 @@ def mouseFunction(*args):
     if args[0] == GLUT_LEFT_BUTTON and args[1] == GLUT_DOWN:
         isClicked = True
 
-        if mousePositionY > 110:
+        if mousePositionY > 110: #çizim paneline tıklandıysa çizime baslandı
             isDrawing = True
 
         if mousePositionX < 100 and mousePositionY < 110:  # Kalem Secildi
@@ -297,8 +314,6 @@ def mouseFunction(*args):
                 isBlueSelected = 1
 
 
-
-
         elif mousePositionY > 110 and selectedPanel == panelOptions[2]:  # farenin ilk dokunusunda koordinat alır
             if len(quadPoints) < 1:
                 quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
@@ -314,7 +329,7 @@ def mouseFunction(*args):
         isUndoClicked=False
         print(args)
 
-        if mousePositionY > 110 and selectedPanel == panelOptions[0]:
+        if mousePositionY > 110 and selectedPanel == panelOptions[0]: # kalem ile o anki çizim bitti
             points.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
 
             temp = DrawAction()
@@ -325,7 +340,7 @@ def mouseFunction(*args):
             pencilPoints.append(temp)
             points.clear()
 
-        elif mousePositionY > 110 and selectedPanel == panelOptions[1]:
+        elif mousePositionY > 110 and selectedPanel == panelOptions[1]: #silgi ile o anki silme işlemi bitti
             points.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
 
             temp = DrawAction()
@@ -337,7 +352,7 @@ def mouseFunction(*args):
             points.clear()
 
 
-        elif mousePositionY > 110 and selectedPanel == panelOptions[2]:
+        elif mousePositionY > 110 and selectedPanel == panelOptions[2]: # dörtgen sekil cizme islemi bitti
             if len(quadPoints) < 2:
                 quadPoints.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
             else:
@@ -356,7 +371,7 @@ def mouseFunction(*args):
             quads.append(temp)
             quadPoints.clear()
 
-        elif mousePositionY > 110 and selectedPanel == panelOptions[3]:
+        elif mousePositionY > 110 and selectedPanel == panelOptions[3]: # sulu boya ile cizim islemi bitti
             points.append(convertMousePosDrawAxis(mousePositionX, mousePositionY))
 
             temp = DrawAction()
@@ -470,15 +485,17 @@ def quadDraw(quadsPoints):
 def currentPencilDrawing():  # Kalemin anlık cizim yaptıgı fonksiyon
     global points, isRedSelected, isGreenSelected, isBlueSelected
 
-    # o anki renk beyaz ise siyak olarak değiştir
+    # o anki renk beyaz ise siyah olarak değiştir
     if isRedSelected == 1 and isGreenSelected == 1 and isBlueSelected == 1 and selectedPanel==panelOptions[0]:
         isRedSelected = 0
         isGreenSelected = 0
         isBlueSelected = 0
+
     if selectedPanel==panelOptions[0]:
         glColor(isRedSelected, isGreenSelected, isBlueSelected)
     elif selectedPanel==panelOptions[3]:
         glColor4f(isRedSelected, isGreenSelected, isBlueSelected,0.6)
+
     glLineWidth(pointSize)
 
     if isClicked and isDrawing:
@@ -704,17 +721,6 @@ def controlPanel():  # panel
         paintBackground(0, 0, 0)
     else:
         paintBackground(0.25, 0.25, 0.25)
-
-def keyboardFunc(*args):
-    global pointSize
-    if (args[0] == b'w' or args[0] == b'W') and selectedPanel != panelOptions[2]:
-        if pointSize < 100:
-            pointSize += 10
-    elif (args[0]==b's' or args[0] == b'S'):
-        if pointSize > 5:
-            pointSize -= 5
-
-    print(pointSize)
 
 
 def paint():  # Ana Fonksiyon
