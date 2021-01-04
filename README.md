@@ -4,5 +4,6 @@ Kalemle çizim yapabilen, Quad çizebilen, Yapılan çizimleri silebilen ve yap�
 openGL paint2D uygulaması.
 
 
-İstanbul Medeniyet Üniversitesi Bilgisayar Mühendisliği Öğrencilerinden Fatih Dursun Üzer,Emirhan Aktürk ve Osman Yasir Çankaya tarafından geliştirilmiştir.
+İstanbul Medeniyet Üniversitesi Bilgisayar Mühendisliği Öğrencilerinden :
+Fatih Dursun Üzer,Emirhan Aktürk ve Osman Yasir Çankaya tarafından geliştirilmiştir.
 
