@@ -7,6 +7,13 @@ from PIL import Image
 import sys
 
 from DrawAction import DrawAction
+from OpenGL.GL import *
+from OpenGL.GLUT import *
+from PIL import Image
+
+import sys
+
+from DrawAction import DrawAction
 
 windowWidth = 1920
 windowHeight = 1080
@@ -111,6 +118,12 @@ def mouseFunction(*args):
             isDrawing = True
 
         if mousePositionX < 100 and mousePositionY < 110:  # Kalem Secildi
+
+            #o anki renk beyaz ise siyak olarak değiştir
+            if isRedSelected ==1 and isGreenSelected == 1 and isBlueSelected == 1:
+                isRedSelected = 0
+                isGreenSelected = 0
+                isBlueSelected = 0
 
             pointSize = 5.0
 
@@ -294,9 +307,11 @@ def undoDrawAction():
         quads.pop()
     else:
         if len(actionsPoints) > 0:
-            if len(actionsPoints[len(actionsPoints) - 1]) > 0:
-                # temp=actionsPoints[len(actionsPoints)-1]
-                actionsPoints[len(actionsPoints) - 1].pop()
+            for i in range(len(actionsPoints)):
+                if len(actionsPoints[len(actionsPoints) - 1 -i]) > 0:
+                    # temp=actionsPoints[len(actionsPoints)-1]
+                    actionsPoints[len(actionsPoints) - 1 -i].pop()
+                    break
 
 
 def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
@@ -319,7 +334,6 @@ def pencilDrawing(pencilPoints):  # Kalemin cizim yaptıgı fonksiyon
 def eraser(eraserPoints):
     for i in range(len(eraserPoints)):
         for j in range(len(eraserPoints[i].points) - 1):
-            #color = eraserPoints[i].color
             glColor(1, 1, 1)
             glLineWidth(eraserPoints[i].pointSize)
 
@@ -351,7 +365,14 @@ def quadDraw(quadsPoints):
 
 
 def currentPencilDrawing():  # Kalemin anlık cizim yaptıgı fonksiyon
-    global points
+    global points, isRedSelected, isGreenSelected, isBlueSelected
+
+    # o anki renk beyaz ise siyak olarak değiştir
+    if isRedSelected == 1 and isGreenSelected == 1 and isBlueSelected == 1:
+        isRedSelected = 0
+        isGreenSelected = 0
+        isBlueSelected = 0
+
     glColor(isRedSelected, isGreenSelected, isBlueSelected)
     glLineWidth(pointSize)
 
