@@ -765,7 +765,7 @@ def main():
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE)
     glutInitWindowSize(windowWidth, windowHeight)
     glutInitWindowPosition(0, 0)
-    glutCreateWindow(b"Paint 3D")
+    glutCreateWindow(b"Paint 2D")
     glutDisplayFunc(paint)
     glutIdleFunc(paint)
     glutMouseFunc(mouseFunction)
