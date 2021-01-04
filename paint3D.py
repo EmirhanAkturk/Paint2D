@@ -1,8 +1,9 @@
 '''
     Final Project
-    Emirhan Aktürk
-    Fatih Dursun Üzer
-    Osman Yasir Çankaya
+
+    Emirhan Aktürk          19120205058
+    Fatih Dursun Üzer       18120205041
+    Osman Yasir Çankaya     18120205030
 '''
 
 
@@ -180,7 +181,6 @@ def mouseFunction(*args):
             isGreenSelected = 1
             isBlueSelected = 1
 
-
             if pointSize < 20.0:
                 pointSize = 20.0
 
@@ -312,6 +312,31 @@ def mouseFunction(*args):
                 isBlueSelected = 0
             else:
                 isBlueSelected = 1
+
+        elif mousePositionY < 110 and 800 < mousePositionX < 900:  # Beyaz Renk secildi
+            isRedSelected = 1
+            isGreenSelected = 1
+            isBlueSelected = 1
+
+        elif mousePositionY < 110 and 900 < mousePositionX < 1000:  # Sarı Renk secildi
+            isRedSelected = 1
+            isGreenSelected = 1
+            isBlueSelected = 0
+
+        elif mousePositionY < 110 and 1000 < mousePositionX < 1100:  # Mor Renk secildi
+            isRedSelected = 1
+            isGreenSelected = 0
+            isBlueSelected = 1
+
+        elif mousePositionY < 110 and 1100 < mousePositionX < 1200:  # Cyan Renk secildi
+            isRedSelected = 0
+            isGreenSelected = 1
+            isBlueSelected = 1
+
+        elif mousePositionY < 110 and 1200 < mousePositionX < 1300:  # Siyah Renk secildi
+            isRedSelected = 0
+            isGreenSelected = 0
+            isBlueSelected = 0
 
 
         elif mousePositionY > 110 and selectedPanel == panelOptions[2]:  # farenin ilk dokunusunda koordinat alır
